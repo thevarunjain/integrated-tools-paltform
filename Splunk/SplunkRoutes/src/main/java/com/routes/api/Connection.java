@@ -1,4 +1,4 @@
-package com.splunk.connect;
+package com.routes.api;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,6 +6,7 @@ import java.util.Map;
 import com.splunk.HttpService;
 import com.splunk.SSLSecurityProtocol;
 import com.splunk.Service;
+
 
 public class Connection {
 	public static Service connect(String Host, String username, String password) {
@@ -21,6 +22,5 @@ public class Connection {
 		
 		return splunkService;
 	}
-	
 
 }

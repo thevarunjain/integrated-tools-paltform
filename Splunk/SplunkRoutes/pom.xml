@@ -8,11 +8,11 @@
 		<version>2.2.1.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.splunk</groupId>
-	<artifactId>SplunkAPI</artifactId>
+	<groupId>com.routes</groupId>
+	<artifactId>SplunkRoutes</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>SplunkAPI</name>
-	<description>Demo project for Spring Boot</description>
+	<name>SplunkRoutes</name>
+	<description>Splunk Routes</description>
 
 	<properties>
 		<java.version>1.8</java.version>
@@ -27,7 +27,6 @@
 </repository>
 </repositories>
 
-
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -40,6 +39,12 @@
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 			<exclusions>
@@ -49,13 +54,11 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
-	<dependency>
-    <groupId>com.splunk</groupId>
-    <artifactId>splunk</artifactId>
-    <version>1.6.0.0</version>
+		<dependency>
+    		<groupId>com.splunk</groupId>
+    		<artifactId>splunk</artifactId>
+    		<version>1.6.0.0</version>
      </dependency>
-	
 		
 	</dependencies>
 

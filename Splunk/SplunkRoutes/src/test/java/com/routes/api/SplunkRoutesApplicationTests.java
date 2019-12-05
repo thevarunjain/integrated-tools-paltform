@@ -1,10 +1,10 @@
-package com.splunk.connect;
+package com.routes.api;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SplunkApiApplicationTests {
+class SplunkRoutesApplicationTests {
 
 	@Test
 	void contextLoads() {
