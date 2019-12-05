@@ -121,6 +121,10 @@ curl -u admin:<password> -k https://<ip>:8089/services/search/jobs/1572575969.15
 
 #### Splunk Java SDK Setup:
 
+#### SDK Design
+
+![SDK Design](https://github.com/thevarunjain/integrated-tools-paltform/blob/master/Splunk/Images/SDK%20design.PNG)   
+
 Splunk Hooks:
 
 
@@ -160,4 +164,7 @@ add the following to the pom.xml file
 ```
 
 
+
+#### Sample Event Generator using SDK
+![Sample Event Generator using SDK](https://github.com/thevarunjain/integrated-tools-paltform/blob/master/Splunk/Images/Splunk%20Event.PNG)
 
