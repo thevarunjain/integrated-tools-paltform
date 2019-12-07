@@ -3,6 +3,7 @@ package com.IntegratedTools.GitHub.Commits;
 import com.IntegratedTools.GitHub.Constants.Constants;
 import com.IntegratedTools.GitHub.HttpConnectionAndResponseHandler.HttpConnectionAndResponseHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +22,7 @@ public class Commits extends Constants {
     @Autowired
     static HttpConnectionAndResponseHandler httpConnectionAndResponseHandler;
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/noOfCommits/{userName}/{repoName}")
     private static int getNoOfGitHubCommits(@PathVariable("userName") final String user_name, @PathVariable("repoName") String repo_name) throws IOException {
         String URLGitHubIssues = BASE_URL + "repos/" + user_name + '/' + repo_name + "/commits";
