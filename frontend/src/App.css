@@ -29,19 +29,22 @@
 }
 
 .card {
-  max-height: 500px;
   width: 500px;
 }
 
 .card-button {
-  background-color: #29a3a3;
+  background-color: #4ea7b1;
   border: none;
   width: 250px;
 }
 
+.card-button:hover {
+  background-color: #2d8892;
+}
+
 .my-custom-scrollbar {
   position: relative;
-  height: 200px;
+  height: auto;
   overflow: auto;
 }
 .table-wrapper-scroll-y {

@@ -1,0 +1,43 @@
+/* .login-block {
+    background: #ffffff none repeat scroll 0 0;
+    margin: 10px auto 30px;
+    margin-top: 80px;
+    max-width: 1000px;
+    padding: 70px 70px 70px 70px;
+  }
+
+  .card-img {
+    width: 320px;
+    height: 380px;
+  }
+
+  .card-img-top-250 {
+    max-height: 250px;
+    overflow: hidden;
+  }
+
+  .myh3 {
+    text-align: left;
+    font-weight: 250;
+    font-size: 24px;
+  } */
+
+.background {
+  background-image: url(./banner-img.png);
+  filter: blur(10px);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.foreground {
+  backdrop-filter: blur(0.8);
+}
+
+.button-design {
+  background-color: #80b6bc;
+}
+
+.button-design:hover {
+  background-color: #2d8892;
+}
