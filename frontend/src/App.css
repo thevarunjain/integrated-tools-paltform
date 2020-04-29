@@ -1,0 +1,52 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #09d3ac;
+}
+
+.main-container {
+  background-color: #282c34;
+  color: white;
+  min-height: 100vh;
+  padding: 80px 80px;
+}
+
+.card {
+  width: 500px;
+}
+
+.card-button {
+  background-color: #4ea7b1;
+  border: none;
+  width: 250px;
+}
+
+.card-button:hover {
+  background-color: #2d8892;
+}
+
+.my-custom-scrollbar {
+  position: relative;
+  height: auto;
+  overflow: auto;
+}
+.table-wrapper-scroll-y {
+  display: block;
+}

@@ -4,6 +4,7 @@ import java.io.InputStream;
 
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,12 +25,14 @@ import net.minidev.json.JSONObject;
 @RestController
 public class RouteController {
 	
+	@CrossOrigin(origins = "http://localhost:3000")
 	@RequestMapping("/ping")
 	public String home() {
 		return "pinged back";
 	}	
 	
 	
+	@CrossOrigin(origins = "http://localhost:3000")
 	@PostMapping(path = "/EventGenerator",consumes = "application/json")
 	public  String EventGenerator(@RequestBody String message) {
 			System.out.println("Hello");
@@ -46,6 +49,7 @@ public class RouteController {
 			
 
 }
+	@CrossOrigin(origins = "http://localhost:3000")
 	@GetMapping(path = "/serverinfo")
 	public String getServerInfo() {
 		Service splunkservice  = Connection.connect("52.53.233.200", "admin", "SPLUNK-i-0d3cffc781ab082fd");
@@ -70,6 +74,7 @@ public class RouteController {
 		
 	}
 	
+	@CrossOrigin(origins = "http://localhost:3000")
 	@PostMapping(path = "/search/{output_mode}",consumes = "application/json")
 	public String search(@PathVariable("output_mode") String outputmode, @RequestBody String start_time) {
 		Service splunkservice  = Connection.connect("52.53.233.200", "admin", "SPLUNK-i-0d3cffc781ab082fd");
