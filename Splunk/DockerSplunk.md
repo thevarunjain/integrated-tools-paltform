@@ -37,3 +37,14 @@ sudo apt install docker-ce
 ```
 sudo systemctl status docker
 ```
+Get Splunk Image
+
+```
+docker pull store/splunk/splunk:7.3
+```
+
+Run the splunk container
+
+```
+docker run -d -p 8000:8000 -e 'SPLUNK_START_ARGS=--accept-license' -e 'SPLUNK_PASSWORD=<password>' store/splunk/splunk:7.3
+```
