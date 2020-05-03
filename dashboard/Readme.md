@@ -1,3 +1,10 @@
+# Installing docker on centos 
+
+sudo yum install -y docker
+sudo service docker start
+docker --version 
+
+
 # Get Started with Jenkins 
 
 
@@ -41,8 +48,6 @@ HTTP Basic Access Token - 112246fa80d7af43b1a98e9d0aec4574ec
 #### Get Access Token
 https://wiki.jenkins.io/display/JENKINS/Authenticating+scripted+clients
 Go to your profile >  configure
-112246fa80d7af43b1a98e9d0aec4574ec
-
 
 #### JAVA REST CLIENT 
 UNIREST 
@@ -50,5 +55,26 @@ UNIREST
 #### Java Jenkins Client 
 jenkins-client-api
 
+### Java APis
+https://support.cloudbees.com/hc/en-us/articles/226852648-How-to-build-a-job-using-the-REST-API-and-Java-
 
 
+# Github Integration 
+https://www.youtube.com/watch?v=Z3S2gMBUkBo
+Go to manage jenkins 
+got to available plugins
+search github > github integration plugin
+resatrt jenkins 
+
+
+Your centOs machine may not have git installed 
+    sudo yum install git
+after this give /usr/bin/git path to your git configuration in manage jenkins > global configs 
+
+create a new job
+
+
+# JIRA - GITHUB INTEGRATION
+
+Pipeline with Jenkinsfile for maven app
+https://www.jenkins.io/doc/tutorials/build-a-java-app-with-maven/

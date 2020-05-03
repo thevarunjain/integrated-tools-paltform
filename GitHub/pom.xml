@@ -63,13 +63,13 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<version>2.1.5.RELEASE</version>
 				<configuration>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>com.IntegratedTools.GitHub.GitHubApplication</mainClass>
-						</manifest>
-					</archive>
+<!--					<archive>-->
+<!--						<manifest>-->
+<!--							<addClasspath>true</addClasspath>-->
+<!--							<classpathPrefix>lib/</classpathPrefix>-->
+<!--							<mainClass>com.IntegratedTools.GitHub.GitHubApplication</mainClass>-->
+<!--						</manifest>-->
+<!--					</archive>-->
 				</configuration>
 			</plugin>
 		</plugins>
