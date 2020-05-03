@@ -55,16 +55,16 @@ public class getBranchDetails {
                                     if (branchObject.has("name")) {
                                         JSONObject branchDetails = new JSONObject();
                                         String name = branchObject.getString("name");
-                                        branchDetails.put("Name of Branch", name);
+                                        branchDetails.put("nameOfBranch", name);
                                         System.out.println("name = = = " + name);
                                         JSONObject repositories = branchObject.getJSONObject("repository");
-                                        branchDetails.put("Name of Repository", repositories.getString("name"));
+                                        branchDetails.put("nameOfRepository", repositories.getString("name"));
 
                                         JSONObject lastCommit = branchObject.getJSONObject("lastCommit");
-                                        branchDetails.put("lastCommit id", lastCommit.getString("id"));
+                                        branchDetails.put("lastCommitId", lastCommit.getString("id"));
 
                                         JSONObject author = lastCommit.getJSONObject("author");
-                                        branchDetails.put("Author of Commit", author.getString("name"));
+                                        branchDetails.put("authorOfCommit", author.getString("name"));
                                         branchList.add(branchDetails);
                                     } else {
                                         return "No name found";
@@ -77,7 +77,7 @@ public class getBranchDetails {
                             return "No repositories attached found";
                         }
                     }
-                    result.put("Branch Details", branchList);
+                    result.put("branchDetails", branchList);
                 }
 
             }else{

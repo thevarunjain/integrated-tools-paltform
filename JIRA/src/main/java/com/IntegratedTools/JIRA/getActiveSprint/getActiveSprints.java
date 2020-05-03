@@ -40,15 +40,15 @@ public class getActiveSprints {
                     for (int i = 0; i < valuesArray.length(); i++) {
                         JSONObject sprintDetails = new JSONObject();
                         JSONObject valuesObject = valuesArray.getJSONObject(i);
-                        sprintDetails.put("Sprint Id", valuesObject.getString("id"));
-                        sprintDetails.put("Origin Board Id", valuesObject.getString("originBoardId"));
-                        sprintDetails.put("Name of Sprint", valuesObject.getString("name"));
+                        sprintDetails.put("sprintId", valuesObject.getString("id"));
+                        sprintDetails.put("originBoardId", valuesObject.getString("originBoardId"));
+                        sprintDetails.put("nameOfSprint", valuesObject.getString("name"));
                         allSprints.add(sprintDetails);
                     }
                 } else {
                     return "No Sprint present for the selected board";
                 }
-                result.put("Sprint details", allSprints);
+                result.put("sprintDetails", allSprints);
             }else{
                 return "No such board present";
             }

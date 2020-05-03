@@ -41,20 +41,20 @@ public class getAllIssues {
                     //The JSON array consists of multiple JSON objects, so we iterate over each of the JSON object till we get the required JSON object.
                     for (int i = 0; i < issuesArray.length(); i++) {
                         JSONObject allIssuesInSprint = new JSONObject();
-                        allIssuesInSprint.put("Key associated with issue", issuesArray.getJSONObject(i).getString("key"));
+                        allIssuesInSprint.put("keyAssociatedWithIssue", issuesArray.getJSONObject(i).getString("key"));
 
                         if (issuesArray.getJSONObject(i).has("fields")) {
                             JSONObject fieldObjects = issuesArray.getJSONObject(i).getJSONObject("fields"); //Iterate over all objects one by one
                             //Iterating nested JSON Object.
                             String issueTitle = fieldObjects.getString("summary"); //While you iterate over the objects, the object with name "fields" will be fetched
-                            allIssuesInSprint.put("Name of Issue", issueTitle);
+                            allIssuesInSprint.put("nameOfIssue", issueTitle);
                             issueDetails.add(allIssuesInSprint);
                         } else {
                             return "Field object not found";
                         }
 
                     }
-                    result.put("All Issue Details", issueDetails);
+                    result.put("allIssueDetails", issueDetails);
                 }else{
                     return "No Issues present in this Board";
                 }

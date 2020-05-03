@@ -40,12 +40,12 @@ public class getAllBoards {
                 JSONObject boardDetailsObject = new JSONObject();
                 JSONObject valuesObject = valuesArray.getJSONObject(i);
                 if (valuesObject.has("name")){
-                    boardDetailsObject.put("Board Id", valuesObject.getString("id"));
-                    boardDetailsObject.put("Name of the board ",valuesObject.getString("name"));
-                    boardDetailsObject.put("Type of Board", valuesObject.getString("type"));
+                    boardDetailsObject.put("boardId", valuesObject.getString("id"));
+                    boardDetailsObject.put("nameOfTheBoard ",valuesObject.getString("name"));
+                    boardDetailsObject.put("typeOfBoard", valuesObject.getString("type"));
 
                     JSONObject locationObject = valuesObject.getJSONObject("location");
-                    boardDetailsObject.put("Name of the project", locationObject.getString("projectName"));
+                    boardDetailsObject.put("nameOfTheProject", locationObject.getString("projectName"));
                 }else{
                     return "No boards present";
                 }
@@ -53,7 +53,7 @@ public class getAllBoards {
             }
 //            JSONArray jsonarray = obj1.getJSONArray("values");
 //            List<String> list = getValuesForGivenKey(jsonarray.toString(), "name");
-            result.put("Details of Boards present", boardDetails);
+            result.put("detailsOfBoardsPresent", boardDetails);
             System.out.println("response body is ======================= " + response.getBody());
         }catch (Exception e){
             result.put("Error", e);
