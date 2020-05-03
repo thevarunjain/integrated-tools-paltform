@@ -10,7 +10,10 @@ import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
   UserOutlined,
-  FundFilled,
+  CodeFilled,
+  GithubOutlined,
+  ScheduleFilled,
+  FileTextFilled,
 } from "@ant-design/icons";
 
 const { Header, Sider, Content, Footer } = Layout;
@@ -39,6 +42,8 @@ class Dashboard extends Component {
       collapsed: !this.state.collapsed,
     });
   };
+
+  componentDidMount = async () => {};
 
   render() {
     const { selectedUser } = this.state;
@@ -73,15 +78,23 @@ class Dashboard extends Component {
           >
             <Menu.Item key="1">
               <UserOutlined />
-              <span>GitHub</span>
+              <span>User</span>
             </Menu.Item>
             <Menu.Item key="2">
-              <FundFilled />
+              <ScheduleFilled />
               <span>JIRA</span>
             </Menu.Item>
             <Menu.Item key="3">
-              <FundFilled />
+              <GithubOutlined />
+              <span>GitHub</span>
+            </Menu.Item>
+            <Menu.Item key="4">
+              <CodeFilled />
               <span>Jenkins</span>
+            </Menu.Item>
+            <Menu.Item key="5">
+              <FileTextFilled />
+              <span>Splunk</span>
             </Menu.Item>
           </Menu>
         </Sider>
@@ -95,7 +108,7 @@ class Dashboard extends Component {
               }
             )}
           </Header>
-          {this.state.selectedTab === "1" ? (
+          {this.state.selectedTab === "3" ? (
             <Content
               className="site-layout-background"
               style={{
@@ -127,6 +140,21 @@ class Dashboard extends Component {
           ) : (
             ""
           )}
+          {this.state.selectedTab === "1" ? (
+            <Content
+              className="site-layout-background"
+              style={{
+                margin: "24px 16px",
+                padding: 24,
+                minHeight: 280,
+              }}
+            >
+              <Layout>"User Information"</Layout>
+            </Content>
+          ) : (
+            ""
+          )}
+
           {this.state.selectedTab === "2" ? (
             <Content
               className="site-layout-background"
