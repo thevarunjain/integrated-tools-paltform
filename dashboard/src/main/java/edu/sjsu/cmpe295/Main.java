@@ -9,9 +9,10 @@ import java.net.URISyntaxException;
 @SpringBootApplication
 public class Main {
 
-    final static String jenkinsUrl = "http://ec2-54-153-5-132.us-west-1.compute.amazonaws.com:8080";
+    final static String jenkinsUrl = "http://52.53.120.24:8080";
     final static String username = "admin";
     final static String password = "admin";
+
     public static void main(String[] args) throws URISyntaxException {
 
         SpringApplication.run(Main.class, args);
