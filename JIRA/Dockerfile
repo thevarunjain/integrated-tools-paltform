@@ -1,0 +1,4 @@
+FROM openjdk:8
+ADD  target/JIRA-0.0.1-SNAPSHOT.jar JIRA-0.0.1-SNAPSHOT.jar
+EXPOSE 8888
+ENTRYPOINT ["java", "-jar","JIRA-0.0.1-SNAPSHOT.jar"]
