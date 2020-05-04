@@ -3,7 +3,6 @@ import draw from "./draw";
 
 export default class PieChartBuilds extends Component {
   componentDidMount() {
-    console.log("Props inside pie Chart builds: ", this.props);
     draw(this.props);
   }
 

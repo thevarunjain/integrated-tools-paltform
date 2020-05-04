@@ -315,7 +315,7 @@ class Dashboard extends Component {
     let gitCommits = await axios.get(
       `http://54.219.215.34:8080/github/commits/thevarunjain/simple-java-maven-app`
     );
-    console.log("git commits are: ", gitCommits);
+
     if (gitCommits.status === 200 || gitCommits.status === 304) {
       this.setState({
         gitCommits: gitCommits.data.CommitDetails,
@@ -325,7 +325,7 @@ class Dashboard extends Component {
     let gitPullRequests = await axios.get(
       `http://54.219.215.34:8080/github/pullRequests/thevarunjain/simple-java-maven-app`
     );
-    console.log("git pull requests are: ", gitPullRequests);
+
     if (gitPullRequests.status === 200 || gitPullRequests.status === 304) {
       this.setState({
         gitPullRequests: gitPullRequests.data.CommitDetails,
@@ -335,7 +335,7 @@ class Dashboard extends Component {
     let gitIssues = await axios.get(
       `http://54.219.215.34:8080/github/issues/thevarunjain/simple-java-maven-app`
     );
-    console.log("git isssues are: ", gitIssues);
+
     if (gitIssues.status === 200 || gitIssues.status === 304) {
       this.setState({
         gitIssues: gitIssues.data.CommitDetails,
@@ -345,7 +345,7 @@ class Dashboard extends Component {
     let gitBranches = await axios.get(
       `http://54.219.215.34:8080/github/branch/thevarunjain/simple-java-maven-app`
     );
-    console.log("git branches are: ", gitBranches);
+
     if (gitBranches.status === 200 || gitBranches.status === 304) {
       this.setState({
         gitBranches: gitBranches.data.branchDetails,

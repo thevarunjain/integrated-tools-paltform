@@ -36,7 +36,6 @@ export default class DetailsJIRA extends Component {
                 let branchesInfo = "No branches information available.";
                 if (issue.commits) {
                   commitsInfo = issue.commits.map((commit, ci) => {
-                    console.log("Single commit info is: ", commit);
                     return (
                       <div key={ci}>
                         <p>

@@ -4,7 +4,6 @@ import PieChartBuilds from "../pie_chart/index";
 
 export default class ViewPieChartBuilds extends Component {
   render() {
-    console.log("Props inside view pie chart: ", this.props);
     const { failedBuild, passedBuild } = this.props;
     const width = 260;
     const height = 260;
