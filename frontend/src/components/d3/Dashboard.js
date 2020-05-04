@@ -527,7 +527,26 @@ class Dashboard extends Component {
                   minHeight: 280,
                 }}
               >
-                <Layout>"User Information"</Layout>
+                {/* <Layout>Organization People</Layout> */}
+              <h2>Organization People</h2>
+              <ul class="list-group" style={{"width":"50%"}}>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                  Abhishek Konduri
+                  <span class="badge badge-primary badge-pill"> Authorized</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  Varun Jain 
+                  <span class="badge badge-primary badge-pill"> Authorized</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  Rohan Kamat
+                  <span class="badge badge-primary-not badge-pill"> Not Authorized</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  Jasnoor Brar
+                  <span class="badge badge-primary-not badge-pill">Not Authorized</span>
+                </li>
+              </ul>
               </Content>
             ) : (
               ""

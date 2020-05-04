@@ -9,6 +9,15 @@ import Login from "./components/login_signup/login";
 import Signup from "./components/login_signup/signup";
 
 function App() {
+
+
+  localStorage.setItem("Abhishek Konduri", true);
+  localStorage.setItem("Varun Jain", true);
+  localStorage.setItem("Rohan Kamat", false);
+  localStorage.setItem("Jasnoor", false);
+  
+  console.log(localStorage.getItem("Hello"));
+
   return (
     <BrowserRouter>
       <div>
