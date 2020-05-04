@@ -35,7 +35,7 @@ public class Controller {
      * @param name
      * @return
      */
-    @PostMapping(value = "/build/{jobName}")
+    @PostMapping(value = "/build/{name}")
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     public String buildJob(
@@ -160,7 +160,6 @@ public class Controller {
         JSONObject obj = new JSONObject();
         try{
             String url = jenkinsUrl+"/job/"+jobName+"/"+id+urlPadding;
-            System.out.println(url);
 
             HttpResponse<JsonNode> response = Unirest.get(url)
                     .header("Accept", "*/*")
@@ -228,8 +227,6 @@ public class Controller {
                 if(line.contains("Tests run:")){
                     for(String item : line.split(",")){
                         String[] metric = item.split(":");
-                        System.out.println(metric[0]);
-                        System.out.println(!metric[0].equals("Time elapsed"));
                         if(!metric[0].contains("Time elapsed")) {
                             obj.put(metric[0].trim(), metric[1].trim());
                         }
