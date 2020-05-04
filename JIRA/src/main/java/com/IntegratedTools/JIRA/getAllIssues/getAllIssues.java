@@ -48,11 +48,52 @@ public class getAllIssues {
                             //Iterating nested JSON Object.
                             String issueTitle = fieldObjects.getString("summary"); //While you iterate over the objects, the object with name "fields" will be fetched
                             allIssuesInSprint.put("nameOfIssue", issueTitle);
-                            issueDetails.add(allIssuesInSprint);
+
+                            if (fieldObjects.has("priority")){
+                                JSONObject priorityObject = fieldObjects.getJSONObject("priority");
+                                String priorityName = priorityObject.getString("name");
+                                allIssuesInSprint.put("priority", priorityName);
+                            }
+
+                            if (fieldObjects.has("assignee") && !fieldObjects.has("description")){
+                                try {
+
+                                    System.out.println(fieldObjects.getString("assignee"));
+                                    JSONObject assigneeObject = fieldObjects.getJSONObject("assignee");
+                                    String assigneeName = assigneeObject.getString("displayName");
+                                    allIssuesInSprint.put("NameOfAssignee", assigneeName);
+                                    System.out.println("Assignee ===== " + assigneeName);
+                                }catch (Exception e){
+
+                                    allIssuesInSprint.put("NameOfAssignee", "Abhishek Konduri");
+                                }
+                            }
+                            if (fieldObjects.has("status")){
+                                JSONObject statusObject = fieldObjects.getJSONObject("status");
+                                String statusName = statusObject.getString("name");
+                                allIssuesInSprint.put("statusName", statusName);
+                            }
+//                            if (fieldObjects.has("description")){
+//                                if (fieldObjects.getString("description") != null) {
+//                                    String description = fieldObjects.getString("description");
+//                          v          allIssuesInSprint.put("descriptionOfIssue", description);
+//                                }
+//                            }
+                            if (fieldObjects.has("creator")){
+                                JSONObject creatorObject = fieldObjects.getJSONObject("creator");
+                                String creatorName = creatorObject.getString("displayName");
+                                allIssuesInSprint.put("creatorName", creatorName);
+                            }
+                            if (fieldObjects.has("customfield_10024")){
+                                String storyPoints = fieldObjects.getString("customfield_10024");
+                                allIssuesInSprint.put("storyPoints", storyPoints);
+                            }else{
+                                allIssuesInSprint.put("storyPoints", "No Story Points assigned");
+                            }
                         } else {
                             return "Field object not found";
                         }
-
+                        issueDetails.add(allIssuesInSprint);
                     }
                     result.put("allIssueDetails", issueDetails);
                 }else{
@@ -63,6 +104,7 @@ public class getAllIssues {
             }
             System.out.println("response body is ======================= " + response.getBody());
         }catch (Exception e){
+            e.printStackTrace();
             result.put("Error", e);
         }
         return result.toString();
