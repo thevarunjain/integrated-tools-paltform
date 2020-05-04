@@ -23,7 +23,8 @@
   } */
 
 .background {
-  background-image: url(./banner-img.png);
+  /* background-image: url(./banner-img.png); */
+  background-image: url(./bg-img.jpg);
   filter: blur(10px);
   position: absolute;
   width: 100%;

@@ -23,6 +23,7 @@ export var signUpWithCredentials = (email, password) => {
     .createUserWithEmailAndPassword(email, password)
     .then(user => {
       console.log(user);
+      window.alert("Sign up successful");
       return user;
     })
     .catch(function(error) {
