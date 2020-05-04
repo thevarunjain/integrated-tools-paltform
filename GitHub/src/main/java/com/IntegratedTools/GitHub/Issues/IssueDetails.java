@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/github")
 public class IssueDetails extends Constants {
@@ -41,7 +42,7 @@ public class IssueDetails extends Constants {
 
 
     @GetMapping("/issues/{userName}/{repoName}")
-    private static String getNoOfGitHubIssues(@PathVariable("userName") final String user_name, @PathVariable("repoName") String repo_name) throws IOException {
+    private static String getIssueDetails(@PathVariable("userName") final String user_name, @PathVariable("repoName") String repo_name) throws IOException {
         String URLGitHubIssues = BASE_URL + "repos/" + user_name + '/' + repo_name + "/issues";
 
         HttpResponse<JsonNode> response = HttpConnectionAndResponseHandler.getHttpResponse(URLGitHubIssues);
