@@ -25,7 +25,7 @@ const draw = (props) => {
   let y = d3.scaleLinear().range([height, 0]);
   x.domain(
     data.map(function (d) {
-      return d.name;
+      return d.date;
     })
   );
   y.domain([
@@ -43,7 +43,7 @@ const draw = (props) => {
     .append("rect")
     .attr("class", "bar")
     .attr("x", function (d) {
-      return x(d.name);
+      return x(d.date);
     })
     .attr("width", x.bandwidth())
     .attr("y", function (d) {

@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import BarChart from "../../bar_chart";
 import "./viewBarChart.css";
 
 export default class ViewBarChart extends Component {

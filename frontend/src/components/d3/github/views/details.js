@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { Collapse, Tabs, Table } from "antd";
 import axios from "axios";
 import moment from "moment";
+import data from "../data/index";
+import ViewLineChartGit from "./ViewLineChartGit/index";
 
 const { TabPane } = Tabs;
 
@@ -171,6 +173,11 @@ export default class DetailsGit extends Component {
               size="default"
               scroll
             />
+          </TabPane>
+          <TabPane tab="User Activity" key="5">
+            <p>x-axis: Days</p>
+            <p>y-axis: Number of Commits</p>
+            <ViewLineChartGit user={data[0]} />
           </TabPane>
         </Tabs>
       </div>

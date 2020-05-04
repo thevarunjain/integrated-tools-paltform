@@ -42,7 +42,7 @@ export default class DetailsJIRA extends Component {
                         <p>
                           Github Link:{" "}
                           <a target="blank" href={commit.githubLink}>
-                            Go
+                            Click
                           </a>
                         </p>
                         <p>Commit ID: {commit.id}</p>
@@ -51,7 +51,7 @@ export default class DetailsJIRA extends Component {
                         <p>
                           Commit URL:{" "}
                           <a href={commit.url} target="blank">
-                            Go
+                            Click
                           </a>
                         </p>
                       </div>
@@ -75,13 +75,9 @@ export default class DetailsJIRA extends Component {
                   <Collapse style={{ fontSize: "20px" }} accordion>
                     <Panel header={"Issue: " + issue.nameOfIssue} key={i}>
                       <p>Priority: {issue.priority}</p>
-                      <br />
                       <p>Assignee: {issue.creatorName}</p>
-                      <br />
                       <p>Status: {issue.statusName}</p>
-                      <br />
                       <p>Story Points: {issue.storyPoints}</p>
-                      <br />
                       <h5
                         style={{
                           fontWeight: "600",
@@ -94,13 +90,12 @@ export default class DetailsJIRA extends Component {
                       >
                         DEVELOPMENT SECTION:
                       </h5>
-                      <br />
                       <p style={{ color: "#508BC6" }}>
                         Github branches information
                       </p>
                       {branchesInfo}
                       <br />
-                      <p style={{ marginTop: "20px", color: "#508BC6" }}>
+                      <p style={{ marginTop: "12px", color: "#508BC6" }}>
                         Github commit history
                       </p>
                       {commitsInfo}

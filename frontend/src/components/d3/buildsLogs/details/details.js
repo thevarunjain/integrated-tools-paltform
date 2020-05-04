@@ -4,6 +4,8 @@ import axios from "axios";
 import moment from "moment";
 import PieChartBuilds from "../pie_chart/index";
 import ViewPieChartBuilds from "../views/index";
+import ViewBarChart from "../../github/views/ViewBarChartGit";
+import data from "../../github/data/index";
 
 const { Panel } = Collapse;
 const { TextArea } = Input;
@@ -98,7 +100,6 @@ export default class DetailsBuildsLogs extends Component {
           onClick={this.handleJobCollpase}
         >
           <Panel header={"Job: " + job.name} key={index}>
-            {graphs[index]}
             <div
               style={{
                 display: "flex",
@@ -182,6 +183,8 @@ export default class DetailsBuildsLogs extends Component {
               })}
             </div>
             <br />
+            {graphs[index]}
+            <ViewBarChart data={data} />
           </Panel>
         </Collapse>
       );
@@ -217,17 +220,17 @@ export default class DetailsBuildsLogs extends Component {
                   Go to log
                 </a>
               </p>
-              <br />
+
               <p>Commit Message: {this.state.logs.commitMessage}</p>
-              <br />
+
               <p>Tests Run: {this.state.logs["Tests run"]}</p>
-              <br />
+
               <p>Skipped: {this.state.logs.Skipped}</p>
-              <br />
+
               <p>Errors: {this.state.logs.Errors}</p>
-              <br />
+
               <p>Failures: {this.state.logs.Failures}</p>
-              <br />
+
               <p>Build Time: {this.state.logs.buildTime} seconds</p>
             </div>
           ) : (
