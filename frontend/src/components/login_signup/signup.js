@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import bannerImg from "./banner-img.png";
 import "./styles.css";
+import { signUpWithCredentials } from "../Firebase";
 
 class Signup extends Component {
   constructor(props) {
@@ -10,7 +11,8 @@ class Signup extends Component {
       fname: "",
       lname: "",
       password: "",
-      eamil: "",
+      email: "",
+      org : "",
     };
   }
 
@@ -19,6 +21,12 @@ class Signup extends Component {
       [e.target.name]: e.target.value,
     });
   };
+
+  signup = (e) =>{
+    e.preventDefault();
+    signUpWithCredentials(this.state.email, this.state.password);
+    console.log("Sign up done");
+  }
 
   render() {
     const { name, email, password, password2 } = this.state;
@@ -62,7 +70,7 @@ class Signup extends Component {
                   marginBottom: "46px",
                 }}
               >
-                Signup
+                Sign Up 
               </h3>
               <form class="login-form">
                 <div className="row">
@@ -72,14 +80,16 @@ class Signup extends Component {
                       class="form-control"
                       name="fname"
                       autoFocus
-                      onChange={this.onChange}
+                      // onChange={this.onChange}
+                      onChange = {(event) => {this.setState({ fname : event.target.value })}} 
                       placeholder="First Name"
                     />
                   </div>
                   <div class="col-md-6 form-group">
                     <input
                       type="text"
-                      onChange={this.onChange}
+                      // onChange={this.onChange}
+                      onChange = {(event) => {this.setState({ lname : event.target.value })}} 
                       name="lname"
                       class="form-control"
                       placeholder="Last name"
@@ -91,7 +101,8 @@ class Signup extends Component {
                     type="text"
                     class="form-control"
                     name="email"
-                    onChange={this.onChange}
+                    // onChange={this.onChange}
+                    onChange = {(event) => {this.setState({ email : event.target.value })}} 
                     placeholder="Email Address"
                   />
                 </div>
@@ -100,8 +111,19 @@ class Signup extends Component {
                     type="password"
                     class="form-control"
                     name="password"
-                    onChange={this.onChange}
-                    placeholder="Password"
+                    // onChange={this.onChange}
+                    onChange = {(event) => {this.setState({ password : event.target.value })}} 
+                    placeholder="Password (min 6 characters)"
+                  />
+                </div>
+                <div class="form-group">
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="org"
+                    // onChange={this.onChange}
+                    onChange = {(event) => {this.setState({ org : event.target.value })}} 
+                    placeholder="Organization"
                   />
                 </div>
 
@@ -111,10 +133,11 @@ class Signup extends Component {
                   type="submit"
                   style={{ border: "none" }}
                   class="btn btn-secondary btn-lg btn-block form-control button-design"
-                  onClick={this.onChange}
-                >
+                  onClick={this.signup}>
                   Confirm
                 </button>
+
+
                 <div
                   style={{
                     display: "flex",
@@ -124,7 +147,7 @@ class Signup extends Component {
                   }}
                 >
                   <div style={{ marginTop: "20px" }}>
-                    <a
+                    {/* <a
                       className="forgot-password"
                       href="#"
                       style={{
@@ -134,7 +157,7 @@ class Signup extends Component {
                       }}
                     >
                       Forgot Password?{" "}
-                    </a>
+                    </a> */}
                   </div>
                   <div>
                     <a
@@ -147,15 +170,15 @@ class Signup extends Component {
                         textDecoration: "underline",
                       }}
                     >
-                      Already member?Login Now!
+                      Already member ? Login Now!
                     </a>
                   </div>
                   <div
                     class="form-check"
                     style={{ color: "#f5f5eb", fontWeight: "500" }}
                   >
-                    <input type="checkbox" class="form-check-input" />
-                    <small>Keep me signed in</small>
+                    {/* <input type="checkbox" class="form-check-input" /> */}
+                    {/* <small>Keep me signed in</small> */}
                   </div>
                 </div>
               </form>

@@ -61,3 +61,9 @@
   background-color: transparent;
   color: #80b6bc;
 }
+
+
+.badge-primary-not {
+  color: #fff;
+  background-color: #f0374b;
+}
