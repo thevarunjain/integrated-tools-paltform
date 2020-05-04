@@ -19,6 +19,7 @@ import {
 } from "@ant-design/icons";
 import DetailsJIRA from "./jira/views/details/details";
 import DetailsGit from "./github/views/details";
+import DetailsBuildsLogs from "./buildsLogs/details/details";
 
 const { Header, Sider, Content, Footer } = Layout;
 
@@ -246,19 +247,17 @@ class Dashboard extends Component {
 
   getAllJobs = async () => {
     let allJobs = await axios.get(`http://localhost:3001/jenkins/jobs`);
-    console.log("All jobs", allJobs);
     let allJobsArray = [];
     if (allJobs.status === 200 || allJobs.status === 304) {
       allJobs.data.jobs.map(async (job) => {
         let jobDetails = await axios.get(
           `http://localhost:3001/jenkins/jobs/${job.name}`
         );
-        console.log("Job details: ", jobDetails);
         if (jobDetails.status === 200 || jobDetails.status === 304) {
           let job = {};
           let builds = [];
           job.name = jobDetails.data.name;
-          job.url = jobDetails.url;
+          job.url = jobDetails.data.url;
 
           let buildsData = jobDetails.data.builds;
           job.totalBuilds = jobDetails.data.builds
@@ -270,22 +269,40 @@ class Dashboard extends Component {
             let buildDetails = await axios.get(
               `http://localhost:3001/jenkins/jobs/maven-project/builds/${build.number}`
             );
-            console.log("Build details", buildDetails);
+            let buildObject = {};
             if (buildDetails.status === 200 || buildDetails.status === 304) {
-              let build = {};
-              build.number = buildDetails.data.number;
-              build.cause = buildDetails.data.cause;
-              build.result = buildDetails.data.result;
-              build.timestamp = new Date(buildDetails.data.timestamp);
-              build.url = buildDetails.data.url;
-              build.totalTime = buildDetails.data.totalTime;
-              builds.push(build);
-              if (build.result === "FAILURE") {
-                failedBuilds++;
-              } else if (build.result === "SUCCESS") {
-                passedBuilds++;
+              buildObject.number = buildDetails.data.number;
+              buildObject.cause = buildDetails.data.cause;
+              buildObject.result = buildDetails.data.result;
+              buildObject.timestamp = new Intl.DateTimeFormat("en-US", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+              }).format(buildDetails.data.timestamp);
+              buildObject.url = buildDetails.data.url;
+              buildObject.totalTime = buildDetails.data.totaltime;
+
+              if (buildObject.result === "FAILURE") {
+                failedBuilds += 1;
+              } else if (buildObject.result === "SUCCESS") {
+                passedBuilds += 1;
               }
             }
+
+            let buildLogDetails = await axios.get(
+              `http://localhost:3001/jenkins/jobs/maven-project/builds/${build.number}/log`
+            );
+            console.log("Build log details", buildLogDetails);
+            if (
+              buildLogDetails.status === 200 ||
+              buildLogDetails.status === 304
+            ) {
+              buildObject.logs = buildLogDetails.data;
+            }
+            builds.push(buildObject);
           });
           job.builds = builds;
           job.failedBuilds = failedBuilds;
@@ -582,7 +599,7 @@ class Dashboard extends Component {
                 }}
               >
                 <Layout>
-                  <DetailsGit {...this.state} />
+                  <DetailsBuildsLogs {...this.state} />
                 </Layout>
                 {/* <Layout>
                   <Content style={{ height: 300 }}>
