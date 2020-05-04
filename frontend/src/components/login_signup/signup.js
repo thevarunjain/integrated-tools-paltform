@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import bannerImg from "./banner-img.png";
 import "./styles.css";
+import { signUpWithCredentials } from "../Firebase";
 
 class Signup extends Component {
   constructor(props) {
@@ -18,6 +19,9 @@ class Signup extends Component {
     this.setState({
       [e.target.name]: e.target.value,
     });
+
+    signUpWithCredentials(this.state.email, this.state.password);
+
   };
 
   render() {

@@ -3,6 +3,10 @@ import { Link } from "react-router-dom";
 import bannerImg from "./banner-img.png";
 import "./styles.css";
 
+import { signUpWithCredentials } from "../Firebase";
+var firebase = require("firebase/app");
+require("firebase/auth");
+
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -15,6 +19,18 @@ class Login extends Component {
   onChange = (e) => {
     this.setState({
       [e.target.name]: e.target.value,
+    });
+
+    var email = this.state.email;
+    var password = this.state.password;
+
+    firebase.auth().signInWithEmailAndPassword(email, password)
+    .then(data => {                
+            console.log(data);
+          })
+      .catch(function(error) {
+      console.log(error);
+      window.alert(error.message);
     });
   };
 
