@@ -12,7 +12,7 @@ class Signup extends Component {
       lname: "",
       password: "",
       email: "",
-      org : "",
+      org: "",
     };
   }
 
@@ -22,11 +22,12 @@ class Signup extends Component {
     });
   };
 
-  signup = (e) =>{
+  signup = (e) => {
     e.preventDefault();
     signUpWithCredentials(this.state.email, this.state.password);
+    this.props.history.push("/login");
     console.log("Sign up done");
-  }
+  };
 
   render() {
     const { name, email, password, password2 } = this.state;
@@ -70,7 +71,7 @@ class Signup extends Component {
                   marginBottom: "46px",
                 }}
               >
-                Sign Up 
+                Sign Up
               </h3>
               <form class="login-form">
                 <div className="row">
@@ -81,7 +82,9 @@ class Signup extends Component {
                       name="fname"
                       autoFocus
                       // onChange={this.onChange}
-                      onChange = {(event) => {this.setState({ fname : event.target.value })}} 
+                      onChange={(event) => {
+                        this.setState({ fname: event.target.value });
+                      }}
                       placeholder="First Name"
                     />
                   </div>
@@ -89,7 +92,9 @@ class Signup extends Component {
                     <input
                       type="text"
                       // onChange={this.onChange}
-                      onChange = {(event) => {this.setState({ lname : event.target.value })}} 
+                      onChange={(event) => {
+                        this.setState({ lname: event.target.value });
+                      }}
                       name="lname"
                       class="form-control"
                       placeholder="Last name"
@@ -102,7 +107,9 @@ class Signup extends Component {
                     class="form-control"
                     name="email"
                     // onChange={this.onChange}
-                    onChange = {(event) => {this.setState({ email : event.target.value })}} 
+                    onChange={(event) => {
+                      this.setState({ email: event.target.value });
+                    }}
                     placeholder="Email Address"
                   />
                 </div>
@@ -112,7 +119,9 @@ class Signup extends Component {
                     class="form-control"
                     name="password"
                     // onChange={this.onChange}
-                    onChange = {(event) => {this.setState({ password : event.target.value })}} 
+                    onChange={(event) => {
+                      this.setState({ password: event.target.value });
+                    }}
                     placeholder="Password (min 6 characters)"
                   />
                 </div>
@@ -122,7 +131,9 @@ class Signup extends Component {
                     class="form-control"
                     name="org"
                     // onChange={this.onChange}
-                    onChange = {(event) => {this.setState({ org : event.target.value })}} 
+                    onChange={(event) => {
+                      this.setState({ org: event.target.value });
+                    }}
                     placeholder="Organization"
                   />
                 </div>
@@ -133,10 +144,10 @@ class Signup extends Component {
                   type="submit"
                   style={{ border: "none" }}
                   class="btn btn-secondary btn-lg btn-block form-control button-design"
-                  onClick={this.signup}>
+                  onClick={this.signup}
+                >
                   Confirm
                 </button>
-
 
                 <div
                   style={{

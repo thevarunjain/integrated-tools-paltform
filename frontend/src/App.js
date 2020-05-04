@@ -21,7 +21,7 @@ function App() {
   return (
     <BrowserRouter>
       <div>
-        <Route exact path="/" component={Home} />
+        <Route exact path="/" component={Dashboard} />
         <Route exact path="/dashboard" component={Dashboard} />
         <Route exact path="/login" component={Login} />
         <Route exact path="/signup" component={Signup} />
