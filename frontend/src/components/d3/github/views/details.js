@@ -175,8 +175,10 @@ export default class DetailsGit extends Component {
             />
           </TabPane>
           <TabPane tab="User Activity" key="5">
-            <p>x-axis: Days</p>
-            <p>y-axis: Number of Commits</p>
+            <div style={{ padding: "12px" }}>
+              <p>x-axis: Days</p>
+              <p>y-axis: Number of Commits</p>
+            </div>
             <ViewLineChartGit user={data[0]} />
           </TabPane>
         </Tabs>

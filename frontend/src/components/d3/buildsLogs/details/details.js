@@ -174,7 +174,7 @@ export default class DetailsBuildsLogs extends Component {
                       </p>
                       <p>
                         Total Build Time: {Math.round(build.totalTime / 60, 2)}{" "}
-                        minutes
+                        seconds
                       </p>
                       <p></p>
                     </Panel>
@@ -231,7 +231,7 @@ export default class DetailsBuildsLogs extends Component {
 
               <p>Failures: {this.state.logs.Failures}</p>
 
-              <p>Build Time: {this.state.logs.buildTime} seconds</p>
+              <p>Build Time: {this.state.logs.buildTime}</p>
             </div>
           ) : (
             ""

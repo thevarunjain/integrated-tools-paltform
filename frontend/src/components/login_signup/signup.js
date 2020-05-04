@@ -25,7 +25,6 @@ class Signup extends Component {
   signup = (e) => {
     e.preventDefault();
     signUpWithCredentials(this.state.email, this.state.password);
-    this.props.history.push("/login");
     console.log("Sign up done");
   };
 
@@ -154,28 +153,19 @@ class Signup extends Component {
                     display: "flex",
                     flexDirection: "row",
                     alignItems: "center",
-                    justifyContent: "space-between",
+                    justifyContent: "justify-center",
                   }}
                 >
-                  <div style={{ marginTop: "20px" }}>
-                    {/* <a
-                      className="forgot-password"
-                      href="#"
-                      style={{
-                        textAlign: "left",
-                        color: "#f5f5eb",
-                        fontWeight: "500",
-                      }}
-                    >
-                      Forgot Password?{" "}
-                    </a> */}
-                  </div>
+                  <div style={{ marginTop: "20px" }}></div>
+                  <br />
+                  <br />
+                  <br />
+
                   <div>
                     <a
                       className="forgot-password"
-                      href="#"
+                      href="/login"
                       style={{
-                        textAlign: "left",
                         color: "#f5f5eb",
                         fontWeight: "500",
                         textDecoration: "underline",

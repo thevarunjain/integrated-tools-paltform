@@ -10,38 +10,38 @@ var firebaseConfig = {
   storageBucket: "instagram-71ef5.appspot.com",
   messagingSenderId: "800360146479",
   appId: "1:800360146479:web:e8048a2cb608afc3db88da",
-  measurementId: "G-SN6PWGMFNV"
+  measurementId: "G-SN6PWGMFNV",
 };
-
 
 firebase.initializeApp(firebaseConfig);
 
 export var signUpWithCredentials = (email, password) => {
-  console.log("Firebase SignUp ",email, " " ,password)
+  console.log("Firebase SignUp ", email, " ", password);
   firebase
     .auth()
     .createUserWithEmailAndPassword(email, password)
-    .then(user => {
+    .then((user) => {
       console.log(user);
       window.alert("Sign up successful");
+      this.props.history.push("/login");
       return user;
     })
-    .catch(function(error) {
+    .catch(function (error) {
       console.log(error);
       window.alert(error.message);
     });
 };
 
 export var loginWithCredentials = (email, password) => {
-  console.log("Firebase login", email," ", password);
+  console.log("Firebase login", email, " ", password);
   firebase
     .auth()
     .signInWithEmailAndPassword(email, password)
-    .then(user => {
+    .then((user) => {
       console.log(user);
       return user;
     })
-    .catch(function(error) {
+    .catch(function (error) {
       console.log(error);
       window.alert(error.message);
     });

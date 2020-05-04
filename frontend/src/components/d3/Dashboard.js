@@ -101,6 +101,10 @@ class Dashboard extends Component {
     }
   };
 
+  handleLogout = () => {
+    this.props.history.push("/login");
+  };
+
   handleProjectChange = async (e) => {
     this.setState({
       selectedProject: e.target.value,
@@ -289,7 +293,9 @@ class Dashboard extends Component {
             ) {
               buildObject.logs = buildLogDetails.data;
             }
-            builds.push(buildObject);
+            if (buildObject.number !== undefined) {
+              builds.push(buildObject);
+            }
           });
           job.builds = builds;
           job.failedBuilds = failedBuilds;
@@ -458,7 +464,17 @@ class Dashboard extends Component {
                 className="dropdown-menu dropdown-menu-right"
                 aria-labelledby="dropdownMenu2"
               >
-                <span style={{ padding: "8px" }}>Logout</span>
+                <button
+                  onCLick={this.handleLogout}
+                  style={{
+                    padding: "8px",
+                    outline: "none",
+                    background: "white",
+                    border: "none",
+                  }}
+                >
+                  Logout
+                </button>
               </div>
             </div>
           </div>

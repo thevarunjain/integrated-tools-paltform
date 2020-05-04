@@ -35,12 +35,12 @@ class Login extends Component {
       .signInWithEmailAndPassword(email, password)
       .then((data) => {
         console.log(data);
+        this.props.history.push("/dashboard");
       })
       .catch(function (error) {
         console.log(error);
         window.alert(error.message);
       });
-    this.props.history.push("/dashboard");
     console.log("Login up done");
   };
 
@@ -121,7 +121,7 @@ class Login extends Component {
                     display: "flex",
                     flexDirection: "row",
                     alignItems: "center",
-                    justifyContent: "space-between",
+                    justifyContent: "justify-center",
                   }}
                 >
                   <div style={{ marginTop: "20px" }}></div>
@@ -131,9 +131,9 @@ class Login extends Component {
                   <div>
                     <a
                       className="forgot-password"
-                      href="#"
+                      href="/signup"
                       style={{
-                        textAlign: "left",
+                        textAlign: "center",
                         color: "#f5f5eb",
                         fontWeight: "500",
                         textDecoration: "underline",
