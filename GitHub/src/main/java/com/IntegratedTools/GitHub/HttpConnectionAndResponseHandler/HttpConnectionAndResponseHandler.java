@@ -1,11 +1,17 @@
 package com.IntegratedTools.GitHub.HttpConnectionAndResponseHandler;
 
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
+import kong.unirest.Unirest;
+import org.springframework.stereotype.Component;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+@Component
 public class HttpConnectionAndResponseHandler {
 
     public static StringBuilder getResponseSB(HttpURLConnection httpcon) throws IOException {
@@ -27,6 +33,14 @@ public class HttpConnectionAndResponseHandler {
         HttpURLConnection httpcon = (HttpURLConnection) new URL(URLDownload).openConnection();
         httpcon.addRequestProperty("User-Agent", "Mozilla/5.0");
         return httpcon;
+    }
+
+    public static HttpResponse<JsonNode> getHttpResponse(String URLGitHubIssues){
+        HttpResponse<JsonNode> response = Unirest.get(URLGitHubIssues)
+                .header("Accept", "application/json")
+                .asJson();
+
+        return response;
     }
 
 }
