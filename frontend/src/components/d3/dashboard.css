@@ -11,13 +11,15 @@
 }
 
 .header {
-  background-color: #eee;
+  background-color: #80b6bc;
   margin: 5px;
   padding-left: 10px;
   padding-top: 4px;
+  padding-bottom: 4px;
   border-radius: 5px;
-  height: 40px;
-  font-size: 24px;
+  font-size: 28px;
+  color: white;
+  font-weight: 600;
 }
 
 .trigger {
@@ -45,4 +47,17 @@
 .projects-heading {
   color: rgba(45, 146, 205, 0.8);
   font-weight: 800;
+}
+
+.build-button {
+  font-size: 20px;
+  background-color: #80b6bc;
+  border: 1px solid #80b6bc;
+  font-weight: 600;
+  color: white;
+}
+
+.build-button:hover {
+  background-color: transparent;
+  color: #80b6bc;
 }
