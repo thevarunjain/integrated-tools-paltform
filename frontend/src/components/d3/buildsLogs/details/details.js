@@ -1,7 +1,9 @@
 import React, { Component } from "react";
-import { Collapse, Modal, Input } from "antd";
+import { Collapse, Modal, Input, message } from "antd";
 import axios from "axios";
 import moment from "moment";
+import PieChartBuilds from "../pie_chart/index";
+import ViewPieChartBuilds from "../views/index";
 
 const { Panel } = Collapse;
 const { TextArea } = Input;
@@ -10,7 +12,6 @@ export default class DetailsBuildsLogs extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      buildSuccess: false,
       selectedBuildForLogs: "",
       visible: false,
       logs: "",
@@ -41,18 +42,63 @@ export default class DetailsBuildsLogs extends Component {
   };
 
   handleBuildJob = async (e, jobName) => {
-    let buildJob = await axios.post(``);
+    let buildJob = await axios.post(
+      `http://localhost:3001/jenkins/build/${jobName}`
+    );
+    if (buildJob.status === 200 || buildJob.status === 304) {
+      message.success("Build has been started.");
+    }
+  };
+
+  handleJobCollpase = () => {
+    this.forceUpdate();
   };
 
   render() {
     const { allJobs } = this.props;
-    console.log("All jobs ", allJobs);
+
+    let graphs = [];
+
+    allJobs.map((job) => {
+      let builds = job.builds;
+      let failedBuild = 0,
+        passedBuild = 0;
+      builds.map((build) => {
+        if (build.result === "FAILURE") {
+          failedBuild++;
+        } else {
+          passedBuild++;
+        }
+      });
+
+      graphs.push(
+        <ViewPieChartBuilds
+          failedBuild={failedBuild}
+          passedBuild={passedBuild}
+        ></ViewPieChartBuilds>
+      );
+    });
 
     let jobsContent = allJobs.map((job, index) => {
       let builds = job.builds;
+      let failedBuild = 0,
+        passedBuild = 0;
+      builds.map((build) => {
+        if (build.result === "FAILURE") {
+          failedBuild++;
+        } else {
+          passedBuild++;
+        }
+      });
+
       return (
-        <Collapse style={{ fontSize: "20px" }} accordion>
+        <Collapse
+          style={{ fontSize: "20px" }}
+          accordion
+          onClick={this.handleJobCollpase}
+        >
           <Panel header={"Job: " + job.name} key={index}>
+            {graphs[index]}
             <div
               style={{
                 display: "flex",
@@ -135,6 +181,7 @@ export default class DetailsBuildsLogs extends Component {
                 );
               })}
             </div>
+            <br />
           </Panel>
         </Collapse>
       );

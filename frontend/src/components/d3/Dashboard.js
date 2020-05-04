@@ -45,13 +45,11 @@ class Dashboard extends Component {
 
   handleBoardChange = async (e) => {
     const { value } = e.target;
-    console.log("e.target.value is: ", value);
     this.setState({
       activeBoard: value,
     });
     let sprintsArray = [];
     if (value !== "") {
-      console.log("It shd enter here: ");
       let sprints = await axios.get(
         `http://localhost:8888/integratedTools/JIRA/ActiveSprintDetails/${value}`
       );
@@ -62,13 +60,11 @@ class Dashboard extends Component {
         sprints.data !== "No Sprint present for the selected board" &&
         sprints.data.sprintDetails
       ) {
-        console.log("It shd enter here as well: ");
         let sprintDetails = sprints.data.sprintDetails;
         sprintDetails.map(async (sprint, index) => {
           let issues = await axios.get(
             `http://localhost:8888/integratedTools/JIRA/allIssues/${sprint.originBoardId}/${sprint.sprintId}`
           );
-          console.log("Entering late here");
           if (
             (issues.status === 200 || issues.status === 304) &&
             issues.data &&
@@ -81,7 +77,6 @@ class Dashboard extends Component {
           }
         });
       }
-      console.log("Entering first here");
       setTimeout(
         function () {
           //Start the timer
@@ -102,11 +97,16 @@ class Dashboard extends Component {
     }
   };
 
-  handleProjectChange = (e) => {
+  handleProjectChange = async (e) => {
     this.setState({
       selectedProject: e.target.value,
     });
-    this.getAllBoardsOfProject();
+    setTimeout(
+      function () {
+        this.getAllBoardsOfProject();
+      }.bind(this),
+      1000
+    );
   };
 
   handleTabChange = (key) => {
@@ -127,6 +127,7 @@ class Dashboard extends Component {
     let allProjects = await axios.get(
       "http://localhost:8888/integratedTools/JIRA/allProjectDetails"
     );
+
     if (allProjects.status === 200 || allProjects.status === 304) {
       this.setState({
         allProjects: allProjects.data,
@@ -141,113 +142,98 @@ class Dashboard extends Component {
     let jiraAllBoards = await axios.get(
       "http://localhost:8888/integratedTools/JIRA/allBoardDetails"
     );
-
     if (jiraAllBoards.status === 200 || jiraAllBoards.status === 304) {
       if (jiraAllBoards.data && jiraAllBoards.data.detailsOfBoardsPresent) {
-        jiraAllBoards.data.detailsOfBoardsPresent.map((b) => {
+        jiraAllBoards.data.detailsOfBoardsPresent.map(async (b) => {
           if (b.nameOfTheProject === this.state.selectedProject) {
-            boards.push(b);
+            let boardObject = {};
+            boardObject = b;
+            let sprints = await axios.get(
+              `http://localhost:8888/integratedTools/JIRA/ActiveSprintDetails/${b.boardId}`
+            );
+
+            if (
+              (sprints.status === 200 || sprints.status === 304) &&
+              sprints.data &&
+              sprints.data !== "No Sprint present for the selected board" &&
+              sprints.data.sprintDetails
+            ) {
+              let sprintsArray = [];
+              sprints.data.sprintDetails.map(async (sprint) => {
+                let issuesInSprint = await axios.get(
+                  `http://localhost:8888/integratedTools/JIRA/allIssues/${sprint.originBoardId}/${sprint.sprintId}`
+                );
+                if (
+                  (issuesInSprint.status === 200 ||
+                    issuesInSprint.status === 304) &&
+                  issuesInSprint.data &&
+                  issuesInSprint.data !== "No Issues present in this Board" &&
+                  issuesInSprint.data.allIssueDetails
+                ) {
+                  let sprintObject = sprint;
+                  let issuesArray = [];
+                  issuesInSprint.data.allIssueDetails.map(async (issue) => {
+                    let branchesDetails = await axios.get(
+                      `http://localhost:8888/integratedTools/JIRA/branchDetails/${issue.keyAssociatedWithIssue}`
+                    );
+
+                    let issueObject = issue;
+
+                    if (
+                      (branchesDetails.status === 200 ||
+                        branchesDetails.status === 304) &&
+                      branchesDetails.data &&
+                      branchesDetails.data !==
+                        "No repositories attached found" &&
+                      branchesDetails.data.branchDetails
+                    ) {
+                      issueObject.branchesDetails =
+                        branchesDetails.data.branchDetails;
+                    }
+
+                    let commitDetails = await axios.get(
+                      `http://localhost:8888/integratedTools/JIRA/commitDetails/${issue.keyAssociatedWithIssue}`
+                    );
+
+                    if (
+                      (commitDetails.status === 200 ||
+                        commitDetails.status === 304) &&
+                      commitDetails.data &&
+                      commitDetails.data !== "No repositories attached found" &&
+                      commitDetails.data.commits
+                    ) {
+                      issueObject.commits = commitDetails.data.commits;
+                    }
+
+                    issuesArray.push(issueObject);
+                  });
+                  sprintObject.issues = issuesArray;
+                  sprintsArray.push(sprintObject);
+                }
+              });
+              boardObject.sprints = sprintsArray;
+            }
+            boards.push(boardObject);
           }
         });
-        this.setState({
-          jiraAllBoards: boards,
-        });
+
+        setTimeout(
+          function () {
+            this.setState({
+              jiraAllBoards: boards,
+            });
+          }.bind(this),
+          1000
+        );
       }
-    }
-    this.getAllIssues();
-  };
-
-  getAllIssues = async () => {
-    console.log("Jira all boards are: ", this.state.jiraAllBoards);
-    if (this.state.jiraAllBoards.length > 0) {
-      this.state.jiraAllBoards.map(async (board, index) => {
-        let sprints = await axios.get(
-          `http://localhost:8888/integratedTools/JIRA/ActiveSprintDetails/${board.boardId}`
-        );
-        if (
-          (sprints.status === 200 || sprints.status === 304) &&
-          sprints.data &&
-          sprints.data !== "No Sprint present for the selected board" &&
-          sprints.data.sprintDetails
-        ) {
-          let sprintDetails = sprints.data.sprintDetails;
-          sprintDetails.map(async (sprint, idx) => {
-            let issues = await axios.get(
-              `http://localhost:8888/integratedTools/JIRA/allIssues/${sprint.originBoardId}/${sprint.sprintId}`
-            );
-            console.log("Entering late here");
-            if (
-              (issues.status === 200 || issues.status === 304) &&
-              issues.data &&
-              issues.data !== "No Issues present in this Board" &&
-              issues.data.allIssueDetails
-            ) {
-              this.setState({
-                allIssues: this.state.allIssues.concat(
-                  issues.data.allIssueDetails
-                ),
-              });
-            }
-          });
-        }
-      });
-    }
-    setTimeout(
-      function () {
-        //Start the timer
-        this.getBranchesInformation();
-      }.bind(this),
-      1000
-    );
-  };
-
-  getBranchesInformation = async () => {
-    const { allIssues } = this.state;
-    console.log("Entwring in getAllBranches: ", allIssues.length);
-    if (allIssues.length > 0) {
-      allIssues.map(async (issue) => {
-        let branches = await axios.get(
-          `http://localhost:8888/integratedTools/JIRA/branchDetails/${issue.keyAssociatedWithIssue}`
-        );
-        console.log(branches);
-        if (
-          (branches.status === 200 || branches.status === 304) &&
-          branches.data &&
-          branches.data !== "No repositories attached found" &&
-          branches.data.branchDetails
-        ) {
-          let b = {};
-          b.branches = branches.data.branchDetails;
-          b.issueId = issue.keyAssociatedWithIssue;
-          this.setState({
-            branchDetails: [...this.state.branchDetails, b],
-          });
-        }
-
-        let commits = await axios.get(
-          `http://localhost:8888/integratedTools/JIRA/commitDetails/${issue.keyAssociatedWithIssue}`
-        );
-        console.log("commits", commits);
-        if (
-          (commits.status === 200 || commits.status === 304) &&
-          commits.data &&
-          commits.data !== "No repositories attached found" &&
-          commits.data.commits
-        ) {
-          let c = {};
-          c.commits = commits.data.commits;
-          c.issueId = issue.keyAssociatedWithIssue;
-          this.setState({
-            commitHistory: [...this.state.commitHistory, c],
-          });
-        }
-      });
     }
   };
 
   getAllJobs = async () => {
     let allJobs = await axios.get(`http://localhost:3001/jenkins/jobs`);
     let allJobsArray = [];
+    let failedBuilds = 0,
+      passedBuilds = 0;
     if (allJobs.status === 200 || allJobs.status === 304) {
       allJobs.data.jobs.map(async (job) => {
         let jobDetails = await axios.get(
@@ -263,8 +249,6 @@ class Dashboard extends Component {
           job.totalBuilds = jobDetails.data.builds
             ? jobDetails.data.builds.length
             : 0;
-          let failedBuilds = 0,
-            passedBuilds = 0;
           buildsData.map(async (build) => {
             let buildDetails = await axios.get(
               `http://localhost:3001/jenkins/jobs/maven-project/builds/${build.number}`
@@ -285,9 +269,9 @@ class Dashboard extends Component {
               buildObject.url = buildDetails.data.url;
               buildObject.totalTime = buildDetails.data.totaltime;
 
-              if (buildObject.result === "FAILURE") {
+              if (buildDetails.data.result === "FAILURE") {
                 failedBuilds += 1;
-              } else if (buildObject.result === "SUCCESS") {
+              } else if (buildDetails.data.result === "SUCCESS") {
                 passedBuilds += 1;
               }
             }
@@ -295,7 +279,6 @@ class Dashboard extends Component {
             let buildLogDetails = await axios.get(
               `http://localhost:3001/jenkins/jobs/maven-project/builds/${build.number}/log`
             );
-            console.log("Build log details", buildLogDetails);
             if (
               buildLogDetails.status === 200 ||
               buildLogDetails.status === 304
@@ -307,6 +290,8 @@ class Dashboard extends Component {
           job.builds = builds;
           job.failedBuilds = failedBuilds;
           job.passedBuilds = passedBuilds;
+          passedBuilds = 0;
+          failedBuilds = 0;
           allJobsArray.push(job);
         }
       });
@@ -318,29 +303,17 @@ class Dashboard extends Component {
           allJobs: allJobsArray,
         }); //After 1 second, set render to true
       }.bind(this),
-      2000
+      1000
     );
   };
 
   componentDidMount = async () => {
     this.getAllProjects();
     this.getAllJobs();
-    // let jiraAllSprints = await axios.get(
-    //   "http://localhost:8888/integratedTools/JIRA/ActiveSprintDetails/1"
-    // );
-
-    // let jiralAllIssues = await axios.get(
-    //   "http://localhost:8888/integratedTools/JIRA/allIssues/1/1"
-    // );
   };
 
   render() {
-    const {
-      selectedUser,
-      jiraAllBoards,
-      allProjects,
-      selectedProject,
-    } = this.state;
+    const { allProjects } = this.state;
     let projectOptions = allProjects.map((project, index) => {
       return (
         <option key={index} value={project}>
@@ -538,22 +511,16 @@ class Dashboard extends Component {
                 style={{
                   margin: "24px 16px",
                   padding: 24,
-                  minHeight: 280,
                 }}
               >
                 <Layout>
                   <Content>
                     <DetailsJIRA
-                      data={jiraAllBoards}
-                      selectedProject={selectedProject}
+                      style={{ overflow: "scroll" }}
                       handleBoardChange={this.handleBoardChange}
                       {...this.state}
                     />
-                  </Content>
-                </Layout>
-                <Layout>
-                  <Content>
-                    <ViewBarChart data={data} />
+                    {/* <ViewBarChart data={data} /> */}
                   </Content>
                 </Layout>
               </Content>
@@ -573,14 +540,14 @@ class Dashboard extends Component {
                   justifyContent: "center",
                 }}
               >
-                <Layout>
-                  <DetailsGit {...this.state} />
-                </Layout>
                 {/* <Layout>
-                  <Content style={{ height: 300 }}>
+                  <DetailsGit {...this.state} />
+                </Layout> */}
+                <Layout>
+                  <Content>
                     <ViewPieChart data={dataIssues} />
                   </Content>
-                </Layout> */}
+                </Layout>
               </Content>
             ) : (
               ""
