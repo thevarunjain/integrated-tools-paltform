@@ -41,7 +41,7 @@ public class getAllBoards {
                 JSONObject valuesObject = valuesArray.getJSONObject(i);
                 if (valuesObject.has("name")){
                     boardDetailsObject.put("boardId", valuesObject.getString("id"));
-                    boardDetailsObject.put("nameOfTheBoard ",valuesObject.getString("name"));
+                    boardDetailsObject.put("nameOfTheBoard",valuesObject.getString("name"));
                     boardDetailsObject.put("typeOfBoard", valuesObject.getString("type"));
 
                     JSONObject locationObject = valuesObject.getJSONObject("location");
