@@ -45,7 +45,7 @@ export default class DetailsBuildsLogs extends Component {
 
   handleBuildJob = async (e, jobName) => {
     let buildJob = await axios.post(
-      `http://localhost:3001/jenkins/build/${jobName}`
+      `http://52.53.120.24:3000/jenkins/build/${jobName}`
     );
     if (buildJob.status === 200 || buildJob.status === 304) {
       message.success("Build has been started.");

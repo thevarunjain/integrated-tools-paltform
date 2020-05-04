@@ -55,7 +55,7 @@ class Dashboard extends Component {
     let sprintsArray = [];
     if (value !== "") {
       let sprints = await axios.get(
-        `http://localhost:8888/integratedTools/JIRA/ActiveSprintDetails/${value}`
+        `http://52.53.117.75:8888/integratedTools/JIRA/ActiveSprintDetails/${value}`
       );
 
       if (
@@ -67,7 +67,7 @@ class Dashboard extends Component {
         let sprintDetails = sprints.data.sprintDetails;
         sprintDetails.map(async (sprint, index) => {
           let issues = await axios.get(
-            `http://localhost:8888/integratedTools/JIRA/allIssues/${sprint.originBoardId}/${sprint.sprintId}`
+            `http://52.53.117.75:8888/integratedTools/JIRA/allIssues/${sprint.originBoardId}/${sprint.sprintId}`
           );
           if (
             (issues.status === 200 || issues.status === 304) &&
@@ -129,7 +129,7 @@ class Dashboard extends Component {
 
   getAllProjects = async () => {
     let allProjects = await axios.get(
-      "http://localhost:8888/integratedTools/JIRA/allProjectDetails"
+      "http://52.53.117.75:8888/integratedTools/JIRA/allProjectDetails"
     );
 
     if (allProjects.status === 200 || allProjects.status === 304) {
@@ -144,7 +144,7 @@ class Dashboard extends Component {
   getAllBoardsOfProject = async () => {
     let boards = [];
     let jiraAllBoards = await axios.get(
-      "http://localhost:8888/integratedTools/JIRA/allBoardDetails"
+      "http://52.53.117.75:8888/integratedTools/JIRA/allBoardDetails"
     );
     if (jiraAllBoards.status === 200 || jiraAllBoards.status === 304) {
       if (jiraAllBoards.data && jiraAllBoards.data.detailsOfBoardsPresent) {
@@ -153,7 +153,7 @@ class Dashboard extends Component {
             let boardObject = {};
             boardObject = b;
             let sprints = await axios.get(
-              `http://localhost:8888/integratedTools/JIRA/ActiveSprintDetails/${b.boardId}`
+              `http://52.53.117.75:8888/integratedTools/JIRA/ActiveSprintDetails/${b.boardId}`
             );
 
             if (
@@ -165,7 +165,7 @@ class Dashboard extends Component {
               let sprintsArray = [];
               sprints.data.sprintDetails.map(async (sprint) => {
                 let issuesInSprint = await axios.get(
-                  `http://localhost:8888/integratedTools/JIRA/allIssues/${sprint.originBoardId}/${sprint.sprintId}`
+                  `http://52.53.117.75:8888/integratedTools/JIRA/allIssues/${sprint.originBoardId}/${sprint.sprintId}`
                 );
                 if (
                   (issuesInSprint.status === 200 ||
@@ -178,7 +178,7 @@ class Dashboard extends Component {
                   let issuesArray = [];
                   issuesInSprint.data.allIssueDetails.map(async (issue) => {
                     let branchesDetails = await axios.get(
-                      `http://localhost:8888/integratedTools/JIRA/branchDetails/${issue.keyAssociatedWithIssue}`
+                      `http://52.53.117.75:8888/integratedTools/JIRA/branchDetails/${issue.keyAssociatedWithIssue}`
                     );
 
                     let issueObject = issue;
@@ -196,7 +196,7 @@ class Dashboard extends Component {
                     }
 
                     let commitDetails = await axios.get(
-                      `http://localhost:8888/integratedTools/JIRA/commitDetails/${issue.keyAssociatedWithIssue}`
+                      `http://52.53.117.75:8888/integratedTools/JIRA/commitDetails/${issue.keyAssociatedWithIssue}`
                     );
 
                     if (
@@ -234,14 +234,14 @@ class Dashboard extends Component {
   };
 
   getAllJobs = async () => {
-    let allJobs = await axios.get(`http://localhost:3001/jenkins/jobs`);
+    let allJobs = await axios.get(`http://52.53.120.24:3000/jenkins/jobs`);
     let allJobsArray = [];
     let failedBuilds = 0,
       passedBuilds = 0;
     if (allJobs.status === 200 || allJobs.status === 304) {
       allJobs.data.jobs.map(async (job) => {
         let jobDetails = await axios.get(
-          `http://localhost:3001/jenkins/jobs/${job.name}`
+          `http://52.53.120.24:3000/jenkins/jobs/${job.name}`
         );
         if (jobDetails.status === 200 || jobDetails.status === 304) {
           let job = {};
@@ -255,7 +255,7 @@ class Dashboard extends Component {
             : 0;
           buildsData.map(async (build) => {
             let buildDetails = await axios.get(
-              `http://localhost:3001/jenkins/jobs/maven-project/builds/${build.number}`
+              `http://52.53.120.24:3000/jenkins/jobs/maven-project/builds/${build.number}`
             );
             let buildObject = {};
             if (buildDetails.status === 200 || buildDetails.status === 304) {
@@ -281,7 +281,7 @@ class Dashboard extends Component {
             }
 
             let buildLogDetails = await axios.get(
-              `http://localhost:3001/jenkins/jobs/maven-project/builds/${build.number}/log`
+              `http://52.53.120.24:3000/jenkins/jobs/maven-project/builds/${build.number}/log`
             );
             if (
               buildLogDetails.status === 200 ||
@@ -313,7 +313,7 @@ class Dashboard extends Component {
 
   getGithubData = async () => {
     let gitCommits = await axios.get(
-      `http://localhost:8080/github/commits/thevarunjain/simple-java-maven-app`
+      `http://54.219.215.34:8080/github/commits/thevarunjain/simple-java-maven-app`
     );
     console.log("git commits are: ", gitCommits);
     if (gitCommits.status === 200 || gitCommits.status === 304) {
@@ -323,7 +323,7 @@ class Dashboard extends Component {
     }
 
     let gitPullRequests = await axios.get(
-      `http://localhost:8080/github/pullRequests/thevarunjain/simple-java-maven-app`
+      `http://54.219.215.34:8080/github/pullRequests/thevarunjain/simple-java-maven-app`
     );
     console.log("git pull requests are: ", gitPullRequests);
     if (gitPullRequests.status === 200 || gitPullRequests.status === 304) {
@@ -333,7 +333,7 @@ class Dashboard extends Component {
     }
 
     let gitIssues = await axios.get(
-      `http://localhost:8080/github/issues/thevarunjain/simple-java-maven-app`
+      `http://54.219.215.34:8080/github/issues/thevarunjain/simple-java-maven-app`
     );
     console.log("git isssues are: ", gitIssues);
     if (gitIssues.status === 200 || gitIssues.status === 304) {
@@ -343,7 +343,7 @@ class Dashboard extends Component {
     }
 
     let gitBranches = await axios.get(
-      `http://localhost:8080/github/branch/thevarunjain/simple-java-maven-app`
+      `http://54.219.215.34:8080/github/branch/thevarunjain/simple-java-maven-app`
     );
     console.log("git branches are: ", gitBranches);
     if (gitBranches.status === 200 || gitBranches.status === 304) {
