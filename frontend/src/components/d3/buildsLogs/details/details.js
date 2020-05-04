@@ -71,7 +71,7 @@ export default class DetailsBuildsLogs extends Component {
                   fontWeight: "500",
                 }}
               >
-                Go to Job URL
+                Job URL
               </a>
               <button
                 className="btn build-button"
@@ -106,7 +106,7 @@ export default class DetailsBuildsLogs extends Component {
                             fontWeight: "500",
                           }}
                         >
-                          Go to Build URL
+                          Build URL
                         </a>
                         <button
                           className="btn build-button"
