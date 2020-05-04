@@ -85,8 +85,12 @@ public class getAllIssues {
                                 allIssuesInSprint.put("creatorName", creatorName);
                             }
                             if (fieldObjects.has("customfield_10024")){
-                                String storyPoints = fieldObjects.getString("customfield_10024");
-                                allIssuesInSprint.put("storyPoints", storyPoints);
+                                try {
+                                    String storyPoints = fieldObjects.getString("customfield_10024");
+                                    allIssuesInSprint.put("storyPoints", storyPoints);
+                                }catch (Exception e){
+                                    allIssuesInSprint.put("storyPoints", "No Story Points assigned");
+                                }
                             }else{
                                 allIssuesInSprint.put("storyPoints", "No Story Points assigned");
                             }
