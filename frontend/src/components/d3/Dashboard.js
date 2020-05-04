@@ -40,6 +40,10 @@ class Dashboard extends Component {
       branchDetails: [],
       commitHistory: [],
       allJobs: [],
+      gitCommits: [],
+      gitPullRequests: [],
+      gitBranches: [],
+      gitIssues: [],
     };
   }
 
@@ -307,9 +311,52 @@ class Dashboard extends Component {
     );
   };
 
+  getGithubData = async () => {
+    let gitCommits = await axios.get(
+      `http://localhost:8080/github/commits/thevarunjain/simple-java-maven-app`
+    );
+    console.log("git commits are: ", gitCommits);
+    if (gitCommits.status === 200 || gitCommits.status === 304) {
+      this.setState({
+        gitCommits: gitCommits.data.CommitDetails,
+      });
+    }
+
+    let gitPullRequests = await axios.get(
+      `http://localhost:8080/github/pullRequests/thevarunjain/simple-java-maven-app`
+    );
+    console.log("git pull requests are: ", gitPullRequests);
+    if (gitPullRequests.status === 200 || gitPullRequests.status === 304) {
+      this.setState({
+        gitPullRequests: gitPullRequests.data.CommitDetails,
+      });
+    }
+
+    let gitIssues = await axios.get(
+      `http://localhost:8080/github/issues/thevarunjain/simple-java-maven-app`
+    );
+    console.log("git isssues are: ", gitIssues);
+    if (gitIssues.status === 200 || gitIssues.status === 304) {
+      this.setState({
+        gitIssues: gitIssues.data.CommitDetails,
+      });
+    }
+
+    let gitBranches = await axios.get(
+      `http://localhost:8080/github/branch/thevarunjain/simple-java-maven-app`
+    );
+    console.log("git branches are: ", gitBranches);
+    if (gitBranches.status === 200 || gitBranches.status === 304) {
+      this.setState({
+        gitBranches: gitBranches.data.branchDetails,
+      });
+    }
+  };
+
   componentDidMount = async () => {
     this.getAllProjects();
     this.getAllJobs();
+    this.getGithubData();
   };
 
   render() {
@@ -501,25 +548,36 @@ class Dashboard extends Component {
                 }}
               >
                 {/* <Layout>Organization People</Layout> */}
-              <h2>Organization People</h2>
-              <ul class="list-group" style={{"width":"50%"}}>
-              <li class="list-group-item d-flex justify-content-between align-items-center">
-                  Abhishek Konduri
-                  <span class="badge badge-primary badge-pill"> Authorized</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                  Varun Jain 
-                  <span class="badge badge-primary badge-pill"> Authorized</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                  Rohan Kamat
-                  <span class="badge badge-primary-not badge-pill"> Not Authorized</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                  Jasnoor Brar
-                  <span class="badge badge-primary-not badge-pill">Not Authorized</span>
-                </li>
-              </ul>
+                <h2>Organization People</h2>
+                <ul class="list-group" style={{ width: "50%" }}>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Abhishek Konduri
+                    <span class="badge badge-primary badge-pill">
+                      {" "}
+                      Authorized
+                    </span>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Varun Jain
+                    <span class="badge badge-primary badge-pill">
+                      {" "}
+                      Authorized
+                    </span>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Rohan Kamat
+                    <span class="badge badge-primary-not badge-pill">
+                      {" "}
+                      Not Authorized
+                    </span>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Jasnoor Brar
+                    <span class="badge badge-primary-not badge-pill">
+                      Not Authorized
+                    </span>
+                  </li>
+                </ul>
               </Content>
             ) : (
               ""
@@ -548,25 +606,23 @@ class Dashboard extends Component {
             )}{" "}
             {this.state.selectedTab === "3" ? (
               <Content
-                className="site-layout-background"
                 style={{
                   margin: "24px 16px",
-                  padding: 24,
-                  minHeight: 280,
+                  padding: "24px",
                   display: "flex",
                   flexDirection: "column",
                   alignItemsL: "center",
                   justifyContent: "center",
                 }}
               >
-                {/* <Layout>
-                  <DetailsGit {...this.state} />
-                </Layout> */}
                 <Layout>
+                  <DetailsGit {...this.state} />
+                </Layout>
+                {/* <Layout>
                   <Content>
                     <ViewPieChart data={dataIssues} />
                   </Content>
-                </Layout>
+                </Layout> */}
               </Content>
             ) : (
               ""

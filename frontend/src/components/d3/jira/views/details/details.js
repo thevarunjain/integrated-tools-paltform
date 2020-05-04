@@ -89,6 +89,7 @@ export default class DetailsJIRA extends Component {
                           color: "white",
                           background: "#282c34",
                           padding: "6px",
+                          borderRadius: "10px",
                         }}
                       >
                         DEVELOPMENT SECTION:
