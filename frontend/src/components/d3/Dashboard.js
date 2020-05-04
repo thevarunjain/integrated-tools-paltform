@@ -483,7 +483,7 @@ class Dashboard extends Component {
               </Menu.Item>
               <Menu.Item key="2">
                 <ScheduleFilled />
-                <span>Tast Tracker</span>
+                <span>Task Tracker</span>
               </Menu.Item>
               <Menu.Item key="3">
                 <GithubOutlined />
