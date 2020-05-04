@@ -17,6 +17,7 @@ export default class DetailsBuildsLogs extends Component {
       selectedBuildForLogs: "",
       visible: false,
       logs: "",
+      logsJSON: "",
     };
   }
 

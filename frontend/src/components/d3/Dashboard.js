@@ -590,7 +590,7 @@ class Dashboard extends Component {
                   <li class="list-group-item d-flex justify-content-between align-items-center">
                     Jasnoor Brar
                     <span class="badge badge-primary-not badge-pill">
-                      Not Authorized
+                      Authorized
                     </span>
                   </li>
                 </ul>
