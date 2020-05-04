@@ -38,6 +38,7 @@ class Dashboard extends Component {
       allIssues: [],
       branchDetails: [],
       commitHistory: [],
+      allJobs: [],
     };
   }
 
@@ -243,8 +244,70 @@ class Dashboard extends Component {
     }
   };
 
+  getAllJobs = async () => {
+    let allJobs = await axios.get(`http://localhost:3001/jenkins/jobs`);
+    console.log("All jobs", allJobs);
+    let allJobsArray = [];
+    if (allJobs.status === 200 || allJobs.status === 304) {
+      allJobs.data.jobs.map(async (job) => {
+        let jobDetails = await axios.get(
+          `http://localhost:3001/jenkins/jobs/${job.name}`
+        );
+        console.log("Job details: ", jobDetails);
+        if (jobDetails.status === 200 || jobDetails.status === 304) {
+          let job = {};
+          let builds = [];
+          job.name = jobDetails.data.name;
+          job.url = jobDetails.url;
+
+          let buildsData = jobDetails.data.builds;
+          job.totalBuilds = jobDetails.data.builds
+            ? jobDetails.data.builds.length
+            : 0;
+          let failedBuilds = 0,
+            passedBuilds = 0;
+          buildsData.map(async (build) => {
+            let buildDetails = await axios.get(
+              `http://localhost:3001/jenkins/jobs/maven-project/builds/${build.number}`
+            );
+            console.log("Build details", buildDetails);
+            if (buildDetails.status === 200 || buildDetails.status === 304) {
+              let build = {};
+              build.number = buildDetails.data.number;
+              build.cause = buildDetails.data.cause;
+              build.result = buildDetails.data.result;
+              build.timestamp = new Date(buildDetails.data.timestamp);
+              build.url = buildDetails.data.url;
+              build.totalTime = buildDetails.data.totalTime;
+              builds.push(build);
+              if (build.result === "FAILURE") {
+                failedBuilds++;
+              } else if (build.result === "SUCCESS") {
+                passedBuilds++;
+              }
+            }
+          });
+          job.builds = builds;
+          job.failedBuilds = failedBuilds;
+          job.passedBuilds = passedBuilds;
+          allJobsArray.push(job);
+        }
+      });
+    }
+    setTimeout(
+      function () {
+        //Start the timer
+        this.setState({
+          allJobs: allJobsArray,
+        }); //After 1 second, set render to true
+      }.bind(this),
+      2000
+    );
+  };
+
   componentDidMount = async () => {
     this.getAllProjects();
+    this.getAllJobs();
     // let jiraAllSprints = await axios.get(
     //   "http://localhost:8888/integratedTools/JIRA/ActiveSprintDetails/1"
     // );
@@ -383,19 +446,15 @@ class Dashboard extends Component {
               </Menu.Item>
               <Menu.Item key="2">
                 <ScheduleFilled />
-                <span>JIRA</span>
+                <span>Tast Tracker</span>
               </Menu.Item>
               <Menu.Item key="3">
                 <GithubOutlined />
-                <span>GitHub</span>
+                <span>Code Management</span>
               </Menu.Item>
               <Menu.Item key="4">
-                <CodeFilled />
-                <span>Jenkins</span>
-              </Menu.Item>
-              <Menu.Item key="5">
                 <FileTextFilled />
-                <span>Splunk</span>
+                <span>Builds & Logs</span>
               </Menu.Item>
             </Menu>
           </Sider>
@@ -500,19 +559,34 @@ class Dashboard extends Component {
                 <Layout>
                   <DetailsGit {...this.state} />
                 </Layout>
-                <Layout>
+                {/* <Layout>
                   <Content style={{ height: 300 }}>
                     <ViewPieChart data={dataIssues} />
                   </Content>
+                </Layout> */}
+              </Content>
+            ) : (
+              ""
+            )}
+            {this.state.selectedTab === "4" ? (
+              <Content
+                className="site-layout-background"
+                style={{
+                  margin: "24px 16px",
+                  padding: 24,
+                  minHeight: 280,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItemsL: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Layout>
+                  <DetailsGit {...this.state} />
                 </Layout>
                 {/* <Layout>
                   <Content style={{ height: 300 }}>
-                    <ViewLineChart user={selectedUser} />
-                  </Content>
-                </Layout>
-                <Layout style={{ height: 600 }}>
-                  <Content>
-                    <ViewBarChart data={data} />
+                    <ViewPieChart data={dataIssues} />
                   </Content>
                 </Layout> */}
               </Content>
