@@ -37,6 +37,7 @@ public class HttpConnectionAndResponseHandler {
 
     public static HttpResponse<JsonNode> getHttpResponse(String URLGitHubIssues){
         HttpResponse<JsonNode> response = Unirest.get(URLGitHubIssues)
+                .basicAuth("abhishekkonduri911@gmail.com","5f2ebddd0afca7f742ad98e899def977c90aceb6")
                 .header("Accept", "application/json")
                 .asJson();
 
