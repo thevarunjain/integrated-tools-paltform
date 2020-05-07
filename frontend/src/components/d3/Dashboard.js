@@ -153,20 +153,18 @@ class Dashboard extends Component {
     if (jiraAllBoards.status === 200 || jiraAllBoards.status === 304) {
       if (jiraAllBoards.data && jiraAllBoards.data.detailsOfBoardsPresent) {
         jiraAllBoards.data.detailsOfBoardsPresent.map(async (b) => {
+          let boardObject = {};
           if (b.nameOfTheProject === this.state.selectedProject) {
-            let boardObject = {};
             boardObject = b;
             let sprints = await axios.get(
               `http://52.53.117.75:8888/integratedTools/JIRA/ActiveSprintDetails/${b.boardId}`
             );
-
+            let sprintsArray = [];
             if (
               (sprints.status === 200 || sprints.status === 304) &&
               sprints.data &&
-              sprints.data !== "No Sprint present for the selected board" &&
               sprints.data.sprintDetails
             ) {
-              let sprintsArray = [];
               sprints.data.sprintDetails.map(async (sprint) => {
                 let issuesInSprint = await axios.get(
                   `http://52.53.117.75:8888/integratedTools/JIRA/allIssues/${sprint.originBoardId}/${sprint.sprintId}`
@@ -220,8 +218,8 @@ class Dashboard extends Component {
                 }
               });
               boardObject.sprints = sprintsArray;
+              boards.push(boardObject);
             }
-            boards.push(boardObject);
           }
         });
 
@@ -238,14 +236,14 @@ class Dashboard extends Component {
   };
 
   getAllJobs = async () => {
-    let allJobs = await axios.get(`http://52.53.120.24:3000/jenkins/jobs`);
+    let allJobs = await axios.get(`http://52.9.164.185:3000/jenkins/jobs`);
     let allJobsArray = [];
     let failedBuilds = 0,
       passedBuilds = 0;
     if (allJobs.status === 200 || allJobs.status === 304) {
       allJobs.data.jobs.map(async (job) => {
         let jobDetails = await axios.get(
-          `http://52.53.120.24:3000/jenkins/jobs/${job.name}`
+          `http://52.9.164.185:3000/jenkins/jobs/${job.name}`
         );
         if (jobDetails.status === 200 || jobDetails.status === 304) {
           let job = {};
@@ -259,7 +257,7 @@ class Dashboard extends Component {
             : 0;
           buildsData.map(async (build) => {
             let buildDetails = await axios.get(
-              `http://52.53.120.24:3000/jenkins/jobs/maven-project/builds/${build.number}`
+              `http://52.9.164.185:3000/jenkins/jobs/maven-project/builds/${build.number}`
             );
             let buildObject = {};
             if (buildDetails.status === 200 || buildDetails.status === 304) {
@@ -285,7 +283,7 @@ class Dashboard extends Component {
             }
 
             let buildLogDetails = await axios.get(
-              `http://52.53.120.24:3000/jenkins/jobs/maven-project/builds/${build.number}/log`
+              `http://52.9.164.185:3000/jenkins/jobs/maven-project/builds/${build.number}/log`
             );
             if (
               buildLogDetails.status === 200 ||
@@ -590,7 +588,7 @@ class Dashboard extends Component {
                   <li class="list-group-item d-flex justify-content-between align-items-center">
                     Jasnoor Brar
                     <span class="badge badge-primary-not badge-pill">
-                      Authorized
+                      Not Authorized
                     </span>
                   </li>
                 </ul>
