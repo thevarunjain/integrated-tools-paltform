@@ -43,7 +43,7 @@ export default class DetailsJIRA extends Component {
               exportEnabled: true,
               animationDuration: 2000,
               title: {
-                text: "Story Points in issues",
+                text: "Story Points in Issues",
               },
               axisX: {
                 title: "Issues",
@@ -66,12 +66,12 @@ export default class DetailsJIRA extends Component {
               animationDuration: 2000,
               theme: "light1", // "light1", "dark1", "dark2"
               title: {
-                text: "Pie Chart displaying Status of Issues.",
+                text: "Issue by Status",
               },
               data: [
                 {
                   type: "pie",
-                  indexLabel: "{label}: {y}%",
+                  indexLabel: "{label}: {y}",
                   startAngle: -90,
                   dataPoints: [],
                 },

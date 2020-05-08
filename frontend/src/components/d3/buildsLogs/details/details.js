@@ -53,7 +53,7 @@ export default class DetailsBuildsLogs extends Component {
 
   handleBuildJob = async (e, jobName) => {
     let buildJob = await axios.post(
-      `http://52.53.120.24:3000/jenkins/build/${jobName}`
+      `http://52.9.164.185:3000/jenkins/build/${jobName}`
     );
     if (buildJob.status === 200 || buildJob.status === 304) {
       message.success("Build has been started.");
@@ -102,7 +102,7 @@ export default class DetailsBuildsLogs extends Component {
         animationDuration: 2000,
         theme: "light1", // "light1", "dark1", "dark2"
         title: {
-          text: "Pie Chart displaying Passed and Failed Builds in job.",
+          text: "Builds by Status",
         },
         data: [],
       };
@@ -132,7 +132,7 @@ export default class DetailsBuildsLogs extends Component {
 
       var objPie = {
         type: "pie",
-        indexLabel: "{label}: {y}%",
+        indexLabel: "{label}: {y}",
         startAngle: -90,
         dataPoints: [],
       };
