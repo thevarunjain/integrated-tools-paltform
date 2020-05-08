@@ -91,7 +91,7 @@
 
 [data-theme="compact"] .card-container > .ant-tabs-card > .ant-tabs-bar,
 .card-container > .ant-tabs-card > .ant-tabs-bar {
-  border-color: #fff;
+  border-color: rgba(255, 255, 255, 0.863);
 }
 
 [data-theme="compact"]

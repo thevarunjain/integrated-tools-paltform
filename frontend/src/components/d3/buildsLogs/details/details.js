@@ -7,6 +7,11 @@ import ViewPieChartBuilds from "../views/index";
 import ViewBarChart from "../../github/views/ViewBarChartGit";
 import data from "../../github/data/index";
 import JSONPretty from "react-json-pretty";
+import { IgrPieChartModule, IgrPieChart } from "igniteui-react-charts";
+import CanvasJSReact from "../../../../canvasjs.react";
+
+var CanvasJS = CanvasJSReact.CanvasJS;
+var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 const { Panel } = Collapse;
 const { TextArea } = Input;
@@ -85,16 +90,88 @@ export default class DetailsBuildsLogs extends Component {
     });
 
     let jobsContent = allJobs.map((job, index) => {
-      let builds = job.builds;
+      let builds = job.builds.sort((a, b) =>
+        a.timestamp > b.timestamp ? 1 : -1
+      );
+
       let failedBuild = 0,
         passedBuild = 0;
+      var optionsPie = {
+        animationEnabled: true,
+        exportEnabled: true,
+        animationDuration: 2000,
+        theme: "light1", // "light1", "dark1", "dark2"
+        title: {
+          text: "Pie Chart displaying Passed and Failed Builds in job.",
+        },
+        data: [],
+      };
+      var optionsLine = {
+        animationEnabled: true,
+        exportEnabled: true,
+        animationDuration: 2000,
+        title: {
+          text: "Build Timeline",
+        },
+        axisX: {
+          valueFormatString: "MMM-DD-YYYY",
+        },
+        axisY: {
+          title: "Builds",
+          includeZero: false,
+        },
+        data: [
+          {
+            yValueFormatString: "$#,###",
+            xValueFormatString: "MMMM",
+            type: "spline",
+            dataPoints: [],
+          },
+        ],
+      };
+
+      var objPie = {
+        type: "pie",
+        indexLabel: "{label}: {y}%",
+        startAngle: -90,
+        dataPoints: [],
+      };
+
+      var map = new Map();
       builds.map((build) => {
+        let aDateString = new Date(build.timestamp).toDateString();
+        let aDate = new Date(aDateString);
+        let aDateDate = aDate.toDateString();
+        if (map.get(aDateDate)) {
+          map.set(aDateDate, map.get(aDateDate) + 1);
+        } else {
+          map.set(aDateDate, 1);
+        }
         if (build.result === "FAILURE") {
           failedBuild++;
         } else {
           passedBuild++;
         }
       });
+
+      map.forEach((value, key, map) => {
+        let dataObj = {
+          x: new Date(key),
+          y: value,
+        };
+        optionsLine.data[0].dataPoints.push(dataObj);
+      });
+      let dataObject1 = {
+        y: failedBuild,
+        label: "Failed Builds",
+      };
+      let dataObject2 = {
+        y: passedBuild,
+        label: "Passed Builds",
+      };
+      objPie.dataPoints.push(dataObject1);
+      objPie.dataPoints.push(dataObject2);
+      optionsPie.data.push(objPie);
 
       return (
         <Collapse
@@ -186,8 +263,17 @@ export default class DetailsBuildsLogs extends Component {
               })}
             </div>
             <br />
-            {graphs[index]}
-            <ViewBarChart data={data} />
+            <br />
+            <CanvasJSChart
+              options={optionsPie}
+              /* onRef={ref => this.chart = ref} */
+            />
+            <div style={{ marginTop: "10px" }}></div>
+            <CanvasJSChart
+              options={optionsLine}
+              /* onRef={ref => this.chart = ref} */
+            />
+            {/* <ViewBarChart data={data} /> */}
           </Panel>
         </Collapse>
       );

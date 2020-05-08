@@ -1,6 +1,13 @@
 import React, { Component } from "react";
 import { Collapse } from "antd";
 import axios from "axios";
+import { IgrPieChartModule, IgrPieChart } from "igniteui-react-charts";
+import CanvasJSReact from "../../../../../canvasjs.react";
+
+var CanvasJS = CanvasJSReact.CanvasJS;
+var CanvasJSChart = CanvasJSReact.CanvasJSChart;
+
+IgrPieChartModule.register();
 
 const { Panel } = Collapse;
 
@@ -12,13 +19,15 @@ export default class DetailsJIRA extends Component {
 
   render() {
     const { jiraAllBoards, activeBoard } = this.props;
-    let boardOptions = jiraAllBoards.map((board, index) => {
-      return (
-        <option value={board.boardId} key={index}>
-          {board.nameOfTheBoard}
-        </option>
-      );
-    });
+    let boardOptions = jiraAllBoards
+      ? jiraAllBoards.map((board, index) => {
+          return (
+            <option value={board.boardId} key={index}>
+              {board.nameOfTheBoard}
+            </option>
+          );
+        })
+      : "";
 
     let mainContent = (
       <div style={{ padding: "6px" }}>"No sprints available."</div>
@@ -29,9 +38,68 @@ export default class DetailsJIRA extends Component {
         let sprintsInfo = "No active sprints.";
         if (board.sprints) {
           sprintsInfo = board.sprints.map((sprint, idx) => {
+            var optionsBar = {
+              animationEnabled: true,
+              exportEnabled: true,
+              animationDuration: 2000,
+              title: {
+                text: "Story Points in issues",
+              },
+              axisX: {
+                title: "Issues",
+                reversed: true,
+              },
+              axisY: {
+                title: "Story Points",
+                labelFormatter: this.addSymbols,
+              },
+              data: [
+                {
+                  type: "column",
+                  dataPoints: [],
+                },
+              ],
+            };
+            var options = {
+              animationEnabled: true,
+              exportEnabled: true,
+              animationDuration: 2000,
+              theme: "light1", // "light1", "dark1", "dark2"
+              title: {
+                text: "Pie Chart displaying Status of Issues.",
+              },
+              data: [
+                {
+                  type: "pie",
+                  indexLabel: "{label}: {y}%",
+                  startAngle: -90,
+                  dataPoints: [],
+                },
+              ],
+            };
+            var statusToDo = 0;
+            var statusInProgress = 0;
+            var statusDone = 0;
+
             let issuesInfo = "No issues available.";
             if (sprint.issues) {
               issuesInfo = sprint.issues.map((issue, i) => {
+                let dataPointsObject = {
+                  y:
+                    issue.storyPoints === "No Story Points assigned"
+                      ? 0
+                      : parseFloat(issue.storyPoints),
+                  label: issue.nameOfIssue,
+                };
+                optionsBar.data[0].dataPoints.push(dataPointsObject);
+                if (issue.statusName === "To Do") {
+                  statusToDo++;
+                } else if (issue.statusName === "In Progress") {
+                  statusInProgress++;
+                } else {
+                  statusDone++;
+                }
+
                 let commitsInfo = "No commit history available.";
                 let branchesInfo = "No branches information available.";
                 if (issue.commits) {
@@ -73,40 +141,125 @@ export default class DetailsJIRA extends Component {
                 return (
                   <Collapse style={{ fontSize: "20px" }} accordion>
                     <Panel header={"Issue: " + issue.nameOfIssue} key={i}>
-                      <p>Priority: {issue.priority}</p>
-                      <p>Assignee: {issue.creatorName}</p>
-                      <p>Status: {issue.statusName}</p>
-                      <p>Story Points: {issue.storyPoints}</p>
-                      <h5
-                        style={{
-                          fontWeight: "600",
-                          textDecoration: "underline",
-                          color: "white",
-                          background: "#282c34",
-                          padding: "6px",
-                          borderRadius: "10px",
-                        }}
-                      >
-                        DEVELOPMENT SECTION:
-                      </h5>
-                      <p style={{ color: "#508BC6" }}>
-                        Github branches information
+                      <p>
+                        <span
+                          style={{
+                            backgroundColor: "yellow",
+                            color: "black",
+                            marginRight: "2px",
+                          }}
+                        >
+                          Priority:
+                        </span>{" "}
+                        {issue.priority}
                       </p>
-                      {branchesInfo}
-                      <br />
-                      <p style={{ marginTop: "12px", color: "#508BC6" }}>
-                        Github commit history
+                      <p>
+                        <span
+                          style={{
+                            backgroundColor: "yellow",
+                            color: "black",
+                            marginRight: "2px",
+                          }}
+                        >
+                          Assignee:
+                        </span>{" "}
+                        {issue.creatorName}
                       </p>
-                      {commitsInfo}
+                      <p>
+                        <span
+                          style={{
+                            backgroundColor: "yellow",
+                            color: "black",
+                            marginRight: "2px",
+                          }}
+                        >
+                          Status:
+                        </span>{" "}
+                        {issue.statusName}
+                      </p>
+                      <p>
+                        <span
+                          style={{
+                            backgroundColor: "yellow",
+                            color: "black",
+                            marginRight: "2px",
+                          }}
+                        >
+                          Story Points:
+                        </span>{" "}
+                        {issue.storyPoints}
+                      </p>
+                      <Collapse style={{ fontSize: "20px" }} accordion>
+                        <Panel
+                          style={{ backgroundColor: "#eee" }}
+                          header={
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                              }}
+                            >
+                              <div>Development Section:</div>
+                              <div style={{ fontSize: "14px" }}>
+                                {issue.commits ? issue.commits.length : 0}{" "}
+                                commits{" "}
+                                {issue.branchesDetails
+                                  ? issue.branchesDetails.length
+                                  : 0}{" "}
+                                branches
+                              </div>
+                            </div>
+                          }
+                        >
+                          {" "}
+                          <p style={{ color: "#508BC6" }}>
+                            Github branches information
+                          </p>
+                          {branchesInfo}
+                          <br />
+                          <p style={{ marginTop: "12px", color: "#508BC6" }}>
+                            Github commit history
+                          </p>
+                          {commitsInfo}
+                        </Panel>
+                      </Collapse>
                     </Panel>
                   </Collapse>
                 );
               });
             }
+
+            let obj1 = {
+              y: statusToDo,
+              label: "To Do",
+            };
+            let obj2 = {
+              y: statusInProgress,
+              label: "In Progress",
+            };
+            let obj3 = {
+              y: statusDone,
+              label: "Done",
+            };
+            options.data[0].dataPoints.push(obj1);
+            options.data[0].dataPoints.push(obj2);
+            options.data[0].dataPoints.push(obj3);
+            console.log("Graph options are: ", options);
             return (
               <Collapse style={{ fontSize: "20px" }} accordion>
                 <Panel header={"Sprint: " + sprint.nameOfSprint} key={idx}>
                   {issuesInfo}
+                  <div style={{ marginTop: "10px" }}></div>
+                  <CanvasJSChart
+                    options={options}
+                    /* onRef={ref => this.chart = ref} */
+                  />
+                  <div style={{ marginTop: "10px" }}></div>
+                  <CanvasJSChart
+                    options={optionsBar}
+                    /* onRef={ref => this.chart = ref} */
+                  />
                 </Panel>
               </Collapse>
             );

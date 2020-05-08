@@ -4,6 +4,10 @@ import axios from "axios";
 import moment from "moment";
 import data from "../data/index";
 import ViewLineChartGit from "./ViewLineChartGit/index";
+import CanvasJSReact from "../../../../canvasjs.react";
+
+var CanvasJS = CanvasJSReact.CanvasJS;
+var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 const { TabPane } = Tabs;
 
@@ -15,6 +19,54 @@ export default class DetailsGit extends Component {
 
   render() {
     const { gitIssues, gitCommits, gitPullRequests, gitBranches } = this.props;
+
+    var map = new Map();
+    var sortedCommits = gitCommits.sort((a, b) => {
+      return a.commitTime > b.commitTime ? 1 : -1;
+    });
+
+    sortedCommits.forEach((element) => {
+      let aDateString = new Date(element.commitTime).toDateString();
+      let aDate = new Date(aDateString);
+      let aDateDate = aDate.toDateString();
+      if (map.get(aDateDate)) {
+        map.set(aDateDate, map.get(aDateDate) + 1);
+      } else {
+        map.set(aDateDate, 1);
+      }
+    });
+
+    var options = {
+      animationEnabled: true,
+      animationDuration: 2000,
+      exportEnabled: true,
+      title: {
+        text: "Activity",
+      },
+      axisX: {
+        valueFormatString: "MMM-DD-YYYY",
+      },
+      axisY: {
+        title: "Commits",
+        includeZero: false,
+      },
+      data: [
+        {
+          yValueFormatString: "$#,###",
+          xValueFormatString: "MMMM",
+          type: "spline",
+          dataPoints: [],
+        },
+      ],
+    };
+
+    map.forEach((value, key, map) => {
+      let dataObj = {
+        x: new Date(key),
+        y: value,
+      };
+      options.data[0].dataPoints.push(dataObj);
+    });
 
     const commitsColumns = [
       {
@@ -101,6 +153,13 @@ export default class DetailsGit extends Component {
         dataIndex: "issueCreatedAt",
         key: "issueCreatedAt",
         render: (time) => {
+          let time1 = "May 7th 2020";
+          let time2 = "May 6th 2020";
+          console.log(
+            "Time difference: ",
+            new Date(time1) > new Date(time2),
+            time
+          );
           return moment(time).format("MMMM Do YYYY");
         },
         width: "20%",
@@ -174,12 +233,16 @@ export default class DetailsGit extends Component {
               scroll
             />
           </TabPane>
-          <TabPane tab="User Activity" key="5">
+          <TabPane tab="Activity" key="5">
             <div style={{ padding: "12px" }}>
-              <p>x-axis: Day</p>
-              <p>y-axis: Number of Commits</p>
+              {/* <p>x-axis: Day</p>
+              <p>y-axis: Number of Commits</p> */}
             </div>
-            <ViewLineChartGit user={data[0]} />
+            {/* <ViewLineChartGit user={data[0]} /> */}
+            <CanvasJSChart
+              options={options}
+              /* onRef={ref => this.chart = ref} */
+            />
           </TabPane>
         </Tabs>
       </div>
