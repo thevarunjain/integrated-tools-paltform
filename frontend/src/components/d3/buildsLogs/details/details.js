@@ -67,8 +67,6 @@ export default class DetailsBuildsLogs extends Component {
   render() {
     const { allJobs } = this.props;
 
-    let graphs = [];
-
     allJobs.map((job) => {
       let builds = job.builds;
       let failedBuild = 0,
@@ -80,13 +78,6 @@ export default class DetailsBuildsLogs extends Component {
           passedBuild++;
         }
       });
-
-      graphs.push(
-        <ViewPieChartBuilds
-          failedBuild={failedBuild}
-          passedBuild={passedBuild}
-        ></ViewPieChartBuilds>
-      );
     });
 
     let jobsContent = allJobs.map((job, index) => {
@@ -122,8 +113,8 @@ export default class DetailsBuildsLogs extends Component {
         },
         data: [
           {
-            yValueFormatString: "$#,###",
-            xValueFormatString: "MMMM",
+            yValueFormatString: "# Builds",
+            xValueFormatString: "",
             type: "spline",
             dataPoints: [],
           },
