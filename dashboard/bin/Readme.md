@@ -27,11 +27,23 @@ Access the GUI using browser, use http://host_address:8080
 > Detailed guide for instruction to install jenkins on RedHat Distribution (CentOS)
 > https://wiki.jenkins.io/display/JENKINS/Installing+Jenkins+on+Red+Hat+distributions 
 
+Server
+ssh -i "NCaliforniaAWS.pem" ec2-user@ec2-54-153-5-132.us-west-1.compute.amazonaws.com
+
+Service
+Docker Host 
+ssh -i "NCaliforniaAWS.pem" ubuntu@ec2-52-9-164-185.us-west-1.compute.amazonaws.com
 
 ---
 
 # Credentials
 
+Secret Password - 7525d20862a04195a65f466fd60f09d4
+Username - admin
+Password - admin
+Name - Varun Jain 
+Email - varunsj18@gmail.com
+HTTP Basic Access Token - 112246fa80d7af43b1a98e9d0aec4574ec
 
 #### Get Access Token
 https://wiki.jenkins.io/display/JENKINS/Authenticating+scripted+clients

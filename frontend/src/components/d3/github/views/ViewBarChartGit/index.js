@@ -7,9 +7,9 @@ export default class ViewBarChart extends Component {
     const { data } = this.props;
     return (
       <div id="viewBarChart" className="pane">
-        <div className="header">Users contribution in project</div>
+        <div className="header">Timeline of Builds</div>
         <div style={{ overflowX: "scroll", overflowY: "hidden" }}>
-          <BarChart data={data} width={1000} height={550} />
+          <BarChart data={data} width={900} height={550} />
         </div>
       </div>
     );

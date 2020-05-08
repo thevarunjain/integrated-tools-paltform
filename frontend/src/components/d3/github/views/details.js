@@ -1,8 +1,11 @@
 import React, { Component } from "react";
-import { Collapse } from "antd";
+import { Collapse, Tabs, Table } from "antd";
 import axios from "axios";
+import moment from "moment";
+import data from "../data/index";
+import ViewLineChartGit from "./ViewLineChartGit/index";
 
-const { Panel } = Collapse;
+const { TabPane } = Tabs;
 
 export default class DetailsGit extends Component {
   constructor(props) {
@@ -11,112 +14,174 @@ export default class DetailsGit extends Component {
   }
 
   render() {
-    const { branchDetails, allIssues, commitHistory } = this.props;
-    console.log("All commits:", commitHistory);
+    const { gitIssues, gitCommits, gitPullRequests, gitBranches } = this.props;
 
-    let branchesInfo = allIssues.map((issue, index) => {
-      let branches = [];
-      branchDetails.map((branch, idx) => {
-        if (issue.keyAssociatedWithIssue === branch.issueId) {
-          branches.push(branch.branches);
-        }
-      });
+    const commitsColumns = [
+      {
+        title: "Author",
+        dataIndex: "nameOfAuthor",
+        key: "nameOfAuthor",
+        width: "20%",
+      },
+      {
+        title: "Commit Time",
+        dataIndex: "commitTime",
+        key: "commitTime",
+        render: (time) => {
+          return moment(time).format("MMMM Do YYYY");
+        },
+        width: "20%",
+      },
+      {
+        title: "Commit Message",
+        dataIndex: "commitMessage",
+        key: "commitMessage",
+        width: "35%",
+      },
+      {
+        title: "Commit URL",
+        dataIndex: "commitURL",
+        key: "commitURL",
+        render: (text) => (
+          <span>
+            <a target="blank" href={text}>
+              Click
+            </a>
+          </span>
+        ),
+        width: "25%",
+      },
+    ];
 
-      return (
-        <Collapse defaultActiveKey="0">
-          <Panel header={issue.nameOfIssue} key={index}>
-            {branches.map((b, i) => {
-              console.log("br is: ", b);
-              return b.map((br, id) => {
-                return (
-                  <Collapse defaultActiveKey="0" key={id}>
-                    <Panel header={br.nameOfBranch}>
-                      <p>Repository: {br.nameOfRepository}</p>
-                      <p>Latest Commit Id: {br.lastCommitId}</p>
-                      <p>Author of Commit: {br.authorOfCommit}</p>
-                    </Panel>
-                  </Collapse>
-                );
-              });
-            })}
-          </Panel>
-        </Collapse>
-      );
-    });
+    const issueColumns = [
+      {
+        title: "Issue Title",
+        dataIndex: "issueTitle",
+        key: "issueTitle",
+        width: "20%",
+      },
+      {
+        title: "Issued By",
+        dataIndex: "issueBy",
+        key: "issueBy",
+        width: "20%",
+      },
+      {
+        title: "Issue Created At",
+        dataIndex: "issueCreatedAt",
+        key: "issueCreatedAt",
+        render: (time) => {
+          return moment(time).format("MMMM Do YYYY");
+        },
+        width: "20%",
+      },
+      {
+        title: "Issue Decription",
+        dataIndex: "issueDescription",
+        key: "issueDescription",
+        width: "40%",
+      },
+    ];
 
-    let commitsInfo = allIssues.map((issue, index) => {
-      let commits = [];
-      commitHistory.map((commit, idx) => {
-        if (issue.keyAssociatedWithIssue === commit.issueId) {
-          console.log("commit is: ", commit);
-          commits.push(commit.commits);
-        }
-      });
-      return (
-        <Collapse defaultActiveKey="0">
-          <Panel header={issue.nameOfIssue} key={index}>
-            {commits.map((c, i) => {
-              return c.map((cr, id) => {
-                return (
-                  <Collapse defaultActiveKey="0" key={id}>
-                    <Panel header={cr.message}>
-                      <p>
-                        URL:{" "}
-                        <a target="blank" href={cr.url}>
-                          {cr.url}
-                        </a>
-                      </p>
-                      <p>
-                        Github Link:{" "}
-                        <a target="blank" href={cr.githubLink}>
-                          {cr.githubLink}
-                        </a>
-                      </p>
-                      <p>Name: {cr.name}</p>
-                    </Panel>
-                  </Collapse>
-                );
-              });
-            })}
-          </Panel>
-        </Collapse>
-      );
-    });
+    const pullRequestsColumns = [
+      {
+        title: "Title",
+        dataIndex: "issueTitle",
+        key: "issueTitle",
+        width: "20%",
+      },
+      {
+        title: "Issued By",
+        dataIndex: "issueBy",
+        key: "issueBy",
+        width: "20%",
+      },
+      {
+        title: "Created At",
+        dataIndex: "issueCreatedAt",
+        key: "issueCreatedAt",
+        render: (time) => {
+          return moment(time).format("MMMM Do YYYY");
+        },
+        width: "20%",
+      },
+      {
+        title: "Decription",
+        dataIndex: "issueDescription",
+        key: "issueDescription",
+        width: "40%",
+      },
+    ];
 
-    // if (sprints.length !== 0) {
-    //   sprintsContent = sprints.map((sprint, index) => {
-    //     let issues = sprint.issues;
-    //     console.log("Sprint in map is: ", sprint);
-    //     return (
-    //       <Collapse accordion defaultActiveKey="0">
-    //         <Panel header={sprint.nameOfSprint} key={index}>
-    //           {issues.map((issue, idx) => {
-    //             return (
-    //               <Collapse defaultActiveKey="0">
-    //                 <Panel header={issue.nameOfIssue} key={idx}>
-    //                   <p>Issue description {idx}</p>
-    //                 </Panel>
-    //               </Collapse>
-    //             );
-    //           })}
-    //         </Panel>
-    //       </Collapse>
-    //     );
-    //   });
-    // }
+    const branchesColumns = [
+      {
+        title: "Branch Commit Name",
+        dataIndex: "branchName",
+        key: "branchName",
+        width: "40%",
+      },
+      {
+        title: "Branch Commit URL",
+        dataIndex: "branchCommitUrl",
+        key: "branchCommitUrl",
+        render: (text) => (
+          <span>
+            <a target="blank" href={text}>
+              Click
+            </a>
+          </span>
+        ),
+        width: "60%",
+      },
+    ];
 
     return (
       <div id="viewBarChart" className="pane">
-        <div className="header">GitHub branches and Repository Information</div>
-        <div style={{ overflowX: "scroll", overflowY: "hidden" }}>
-          {branchesInfo}
-        </div>
-        <div className="header" style={{ marginTop: "20px" }}>
-          GitHub Commit History
-        </div>
-        <div style={{ overflowX: "scroll", overflowY: "hidden" }}>
-          {commitsInfo}
-        </div>
+        <Tabs type="card">
+          <TabPane tab="Branches" key="1">
+            <Table
+              columns={branchesColumns}
+              dataSource={gitBranches}
+              onChange={this.onBranchChange}
+              size="default"
+              scroll
+            />
+          </TabPane>
+          <TabPane tab="Commits" key="2">
+            <Table
+              columns={commitsColumns}
+              dataSource={gitCommits}
+              onChange={this.onCommitsChange}
+              size="default"
+              scroll
+            />
+          </TabPane>
+          <TabPane tab="Issues" key="3">
+            <Table
+              columns={issueColumns}
+              dataSource={gitIssues}
+              onChange={this.onIssuesChange}
+              size="default"
+              scroll
+            />
+          </TabPane>
+          <TabPane tab="Pull Requests" key="4">
+            <Table
+              columns={pullRequestsColumns}
+              dataSource={gitPullRequests}
+              onChange={this.onPullRequestChange}
+              size="default"
+              scroll
+            />
+          </TabPane>
+          <TabPane tab="User Activity" key="5">
+            <div style={{ padding: "12px" }}>
+              <p>x-axis: Day</p>
+              <p>y-axis: Number of Commits</p>
+            </div>
+            <ViewLineChartGit user={data[0]} />
+          </TabPane>
+        </Tabs>
       </div>
     );
   }

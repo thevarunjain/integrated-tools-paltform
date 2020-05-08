@@ -11,9 +11,8 @@ export default class DetailsJIRA extends Component {
   }
 
   render() {
-    const { data, selectedProject, sprints, activeBoard } = this.props;
-    let boards = data;
-    let boardOptions = boards.map((board, index) => {
+    const { jiraAllBoards, activeBoard } = this.props;
+    let boardOptions = jiraAllBoards.map((board, index) => {
       return (
         <option value={board.boardId} key={index}>
           {board.nameOfTheBoard}
@@ -21,27 +20,99 @@ export default class DetailsJIRA extends Component {
       );
     });
 
-    let sprintsContent = "No sprints available.";
+    let mainContent = (
+      <div style={{ padding: "6px" }}>"No sprints available."</div>
+    );
 
-    if (sprints.length !== 0) {
-      sprintsContent = sprints.map((sprint, index) => {
-        let issues = sprint.issues;
-        console.log("Sprint in map is: ", sprint);
-        return (
-          <Collapse accordion defaultActiveKey="0">
-            <Panel header={sprint.nameOfSprint} key={index}>
-              {issues.map((issue, idx) => {
+    if (activeBoard !== "") {
+      mainContent = jiraAllBoards.map((board, index) => {
+        let sprintsInfo = "No active sprints.";
+        if (board.sprints) {
+          sprintsInfo = board.sprints.map((sprint, idx) => {
+            let issuesInfo = "No issues available.";
+            if (sprint.issues) {
+              issuesInfo = sprint.issues.map((issue, i) => {
+                let commitsInfo = "No commit history available.";
+                let branchesInfo = "No branches information available.";
+                if (issue.commits) {
+                  commitsInfo = issue.commits.map((commit, ci) => {
+                    return (
+                      <div key={ci}>
+                        <p>
+                          Github Link:{" "}
+                          <a target="blank" href={commit.githubLink}>
+                            Click
+                          </a>
+                        </p>
+                        <p>Commit ID: {commit.id}</p>
+                        <p>Commit Message: {commit.message}</p>
+                        <p>Commit by: {commit.name}</p>
+                        <p>
+                          Commit URL:{" "}
+                          <a href={commit.url} target="blank">
+                            Click
+                          </a>
+                        </p>
+                      </div>
+                    );
+                  });
+                }
+
+                if (issue.branchesDetails) {
+                  branchesInfo = issue.branchesDetails.map((branch, bi) => {
+                    return (
+                      <div key={bi}>
+                        <p>Author of Commit: {branch.authorOfCommit}</p>
+                        <p>Last Commit ID: {branch.lastCommitId}</p>
+                        <p>Branch Name: {branch.nameOfBranch}</p>
+                        <p>Repository Name: {branch.nameOfRepository}</p>
+                      </div>
+                    );
+                  });
+                }
                 return (
-                  <Collapse defaultActiveKey="0">
-                    <Panel header={issue.nameOfIssue} key={idx}>
-                      <p>Issue description {idx}</p>
+                  <Collapse style={{ fontSize: "20px" }} accordion>
+                    <Panel header={"Issue: " + issue.nameOfIssue} key={i}>
+                      <p>Priority: {issue.priority}</p>
+                      <p>Assignee: {issue.creatorName}</p>
+                      <p>Status: {issue.statusName}</p>
+                      <p>Story Points: {issue.storyPoints}</p>
+                      <h5
+                        style={{
+                          fontWeight: "600",
+                          textDecoration: "underline",
+                          color: "white",
+                          background: "#282c34",
+                          padding: "6px",
+                          borderRadius: "10px",
+                        }}
+                      >
+                        DEVELOPMENT SECTION:
+                      </h5>
+                      <p style={{ color: "#508BC6" }}>
+                        Github branches information
+                      </p>
+                      {branchesInfo}
+                      <br />
+                      <p style={{ marginTop: "12px", color: "#508BC6" }}>
+                        Github commit history
+                      </p>
+                      {commitsInfo}
                     </Panel>
                   </Collapse>
                 );
-              })}
-            </Panel>
-          </Collapse>
-        );
+              });
+            }
+            return (
+              <Collapse style={{ fontSize: "20px" }} accordion>
+                <Panel header={"Sprint: " + sprint.nameOfSprint} key={idx}>
+                  {issuesInfo}
+                </Panel>
+              </Collapse>
+            );
+          });
+        }
+        return <div key={index}>{sprintsInfo}</div>;
       });
     }
 
@@ -61,7 +132,7 @@ export default class DetailsJIRA extends Component {
             <h6>Select JIRA Board: </h6>
           </div>
           <select
-            style={{ height: "30px", marginLeft: "9px" }}
+            style={{ height: "30px", marginLeft: "9px", width: "200px" }}
             onChange={this.props.handleBoardChange}
             value={activeBoard}
           >
@@ -72,9 +143,7 @@ export default class DetailsJIRA extends Component {
           </select>
         </div>
         <div className="header">Active Sprints in JIRA</div>
-        <div style={{ overflowX: "scroll", overflowY: "hidden" }}>
-          {sprintsContent}
-        </div>
+        <div style={{ overflow: "scroll" }}>{mainContent}</div>
       </div>
     );
   }

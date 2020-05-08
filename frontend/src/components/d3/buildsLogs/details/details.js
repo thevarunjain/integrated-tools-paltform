@@ -1,7 +1,12 @@
 import React, { Component } from "react";
-import { Collapse, Modal, Input } from "antd";
+import { Collapse, Modal, Input, message } from "antd";
 import axios from "axios";
 import moment from "moment";
+import PieChartBuilds from "../pie_chart/index";
+import ViewPieChartBuilds from "../views/index";
+import ViewBarChart from "../../github/views/ViewBarChartGit";
+import data from "../../github/data/index";
+import JSONPretty from "react-json-pretty";
 
 const { Panel } = Collapse;
 const { TextArea } = Input;
@@ -10,10 +15,10 @@ export default class DetailsBuildsLogs extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      buildSuccess: false,
       selectedBuildForLogs: "",
       visible: false,
       logs: "",
+      logsJSON: "",
     };
   }
 
@@ -22,6 +27,7 @@ export default class DetailsBuildsLogs extends Component {
     this.setState({
       visible: true,
       logs: logs,
+      logsJSON: JSON.stringify(logs),
     });
   };
 
@@ -41,17 +47,61 @@ export default class DetailsBuildsLogs extends Component {
   };
 
   handleBuildJob = async (e, jobName) => {
-    let buildJob = await axios.post(``);
+    let buildJob = await axios.post(
+      `http://52.53.120.24:3000/jenkins/build/${jobName}`
+    );
+    if (buildJob.status === 200 || buildJob.status === 304) {
+      message.success("Build has been started.");
+    }
+  };
+
+  handleJobCollpase = () => {
+    this.forceUpdate();
   };
 
   render() {
     const { allJobs } = this.props;
-    console.log("All jobs ", allJobs);
+
+    let graphs = [];
+
+    allJobs.map((job) => {
+      let builds = job.builds;
+      let failedBuild = 0,
+        passedBuild = 0;
+      builds.map((build) => {
+        if (build.result === "FAILURE") {
+          failedBuild++;
+        } else {
+          passedBuild++;
+        }
+      });
+
+      graphs.push(
+        <ViewPieChartBuilds
+          failedBuild={failedBuild}
+          passedBuild={passedBuild}
+        ></ViewPieChartBuilds>
+      );
+    });
 
     let jobsContent = allJobs.map((job, index) => {
       let builds = job.builds;
+      let failedBuild = 0,
+        passedBuild = 0;
+      builds.map((build) => {
+        if (build.result === "FAILURE") {
+          failedBuild++;
+        } else {
+          passedBuild++;
+        }
+      });
+
       return (
-        <Collapse style={{ fontSize: "20px" }} accordion>
+        <Collapse
+          style={{ fontSize: "20px" }}
+          accordion
+          onClick={this.handleJobCollpase}
+        >
           <Panel header={"Job: " + job.name} key={index}>
             <div
               style={{
@@ -127,7 +177,7 @@ export default class DetailsBuildsLogs extends Component {
                       </p>
                       <p>
                         Total Build Time: {Math.round(build.totalTime / 60, 2)}{" "}
-                        minutes
+                        seconds
                       </p>
                       <p></p>
                     </Panel>
@@ -135,6 +185,9 @@ export default class DetailsBuildsLogs extends Component {
                 );
               })}
             </div>
+            <br />
+            {graphs[index]}
+            <ViewBarChart data={data} />
           </Panel>
         </Collapse>
       );
@@ -170,18 +223,10 @@ export default class DetailsBuildsLogs extends Component {
                   Go to log
                 </a>
               </p>
-              <br />
-              <p>Commit Message: {this.state.logs.commitMessage}</p>
-              <br />
-              <p>Tests Run: {this.state.logs["Tests run"]}</p>
-              <br />
-              <p>Skipped: {this.state.logs.Skipped}</p>
-              <br />
-              <p>Errors: {this.state.logs.Errors}</p>
-              <br />
-              <p>Failures: {this.state.logs.Failures}</p>
-              <br />
-              <p>Build Time: {this.state.logs.buildTime} seconds</p>
+              <JSONPretty
+                id="json-pretty"
+                data={this.state.logsJSON}
+              ></JSONPretty>
             </div>
           ) : (
             ""

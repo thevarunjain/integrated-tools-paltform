@@ -40,20 +40,22 @@ class Dashboard extends Component {
       branchDetails: [],
       commitHistory: [],
       allJobs: [],
+      gitCommits: [],
+      gitPullRequests: [],
+      gitBranches: [],
+      gitIssues: [],
     };
   }
 
   handleBoardChange = async (e) => {
     const { value } = e.target;
-    console.log("e.target.value is: ", value);
     this.setState({
       activeBoard: value,
     });
     let sprintsArray = [];
     if (value !== "") {
-      console.log("It shd enter here: ");
       let sprints = await axios.get(
-        `http://localhost:8888/integratedTools/JIRA/ActiveSprintDetails/${value}`
+        `http://52.53.117.75:8888/integratedTools/JIRA/ActiveSprintDetails/${value}`
       );
 
       if (
@@ -62,13 +64,11 @@ class Dashboard extends Component {
         sprints.data !== "No Sprint present for the selected board" &&
         sprints.data.sprintDetails
       ) {
-        console.log("It shd enter here as well: ");
         let sprintDetails = sprints.data.sprintDetails;
         sprintDetails.map(async (sprint, index) => {
           let issues = await axios.get(
-            `http://localhost:8888/integratedTools/JIRA/allIssues/${sprint.originBoardId}/${sprint.sprintId}`
+            `http://52.53.117.75:8888/integratedTools/JIRA/allIssues/${sprint.originBoardId}/${sprint.sprintId}`
           );
-          console.log("Entering late here");
           if (
             (issues.status === 200 || issues.status === 304) &&
             issues.data &&
@@ -81,7 +81,6 @@ class Dashboard extends Component {
           }
         });
       }
-      console.log("Entering first here");
       setTimeout(
         function () {
           //Start the timer
@@ -102,11 +101,20 @@ class Dashboard extends Component {
     }
   };
 
-  handleProjectChange = (e) => {
+  handleLogout = () => {
+    this.props.history.push("/login");
+  };
+
+  handleProjectChange = async (e) => {
     this.setState({
       selectedProject: e.target.value,
     });
-    this.getAllBoardsOfProject();
+    setTimeout(
+      function () {
+        this.getAllBoardsOfProject();
+      }.bind(this),
+      1000
+    );
   };
 
   handleTabChange = (key) => {
@@ -125,8 +133,9 @@ class Dashboard extends Component {
 
   getAllProjects = async () => {
     let allProjects = await axios.get(
-      "http://localhost:8888/integratedTools/JIRA/allProjectDetails"
+      "http://52.53.117.75:8888/integratedTools/JIRA/allProjectDetails"
     );
+
     if (allProjects.status === 200 || allProjects.status === 304) {
       this.setState({
         allProjects: allProjects.data,
@@ -139,119 +148,102 @@ class Dashboard extends Component {
   getAllBoardsOfProject = async () => {
     let boards = [];
     let jiraAllBoards = await axios.get(
-      "http://localhost:8888/integratedTools/JIRA/allBoardDetails"
+      "http://52.53.117.75:8888/integratedTools/JIRA/allBoardDetails"
     );
-
     if (jiraAllBoards.status === 200 || jiraAllBoards.status === 304) {
       if (jiraAllBoards.data && jiraAllBoards.data.detailsOfBoardsPresent) {
-        jiraAllBoards.data.detailsOfBoardsPresent.map((b) => {
+        jiraAllBoards.data.detailsOfBoardsPresent.map(async (b) => {
+          let boardObject = {};
           if (b.nameOfTheProject === this.state.selectedProject) {
-            boards.push(b);
+            boardObject = b;
+            let sprints = await axios.get(
+              `http://52.53.117.75:8888/integratedTools/JIRA/ActiveSprintDetails/${b.boardId}`
+            );
+            let sprintsArray = [];
+            if (
+              (sprints.status === 200 || sprints.status === 304) &&
+              sprints.data &&
+              sprints.data.sprintDetails
+            ) {
+              sprints.data.sprintDetails.map(async (sprint) => {
+                let issuesInSprint = await axios.get(
+                  `http://52.53.117.75:8888/integratedTools/JIRA/allIssues/${sprint.originBoardId}/${sprint.sprintId}`
+                );
+                if (
+                  (issuesInSprint.status === 200 ||
+                    issuesInSprint.status === 304) &&
+                  issuesInSprint.data &&
+                  issuesInSprint.data !== "No Issues present in this Board" &&
+                  issuesInSprint.data.allIssueDetails
+                ) {
+                  let sprintObject = sprint;
+                  let issuesArray = [];
+                  issuesInSprint.data.allIssueDetails.map(async (issue) => {
+                    let branchesDetails = await axios.get(
+                      `http://52.53.117.75:8888/integratedTools/JIRA/branchDetails/${issue.keyAssociatedWithIssue}`
+                    );
+
+                    let issueObject = issue;
+
+                    if (
+                      (branchesDetails.status === 200 ||
+                        branchesDetails.status === 304) &&
+                      branchesDetails.data &&
+                      branchesDetails.data !==
+                        "No repositories attached found" &&
+                      branchesDetails.data.branchDetails
+                    ) {
+                      issueObject.branchesDetails =
+                        branchesDetails.data.branchDetails;
+                    }
+
+                    let commitDetails = await axios.get(
+                      `http://52.53.117.75:8888/integratedTools/JIRA/commitDetails/${issue.keyAssociatedWithIssue}`
+                    );
+
+                    if (
+                      (commitDetails.status === 200 ||
+                        commitDetails.status === 304) &&
+                      commitDetails.data &&
+                      commitDetails.data !== "No repositories attached found" &&
+                      commitDetails.data.commits
+                    ) {
+                      issueObject.commits = commitDetails.data.commits;
+                    }
+
+                    issuesArray.push(issueObject);
+                  });
+                  sprintObject.issues = issuesArray;
+                  sprintsArray.push(sprintObject);
+                }
+              });
+              boardObject.sprints = sprintsArray;
+              boards.push(boardObject);
+            }
           }
         });
-        this.setState({
-          jiraAllBoards: boards,
-        });
+
+        setTimeout(
+          function () {
+            this.setState({
+              jiraAllBoards: boards,
+            });
+          }.bind(this),
+          1000
+        );
       }
-    }
-    this.getAllIssues();
-  };
-
-  getAllIssues = async () => {
-    console.log("Jira all boards are: ", this.state.jiraAllBoards);
-    if (this.state.jiraAllBoards.length > 0) {
-      this.state.jiraAllBoards.map(async (board, index) => {
-        let sprints = await axios.get(
-          `http://localhost:8888/integratedTools/JIRA/ActiveSprintDetails/${board.boardId}`
-        );
-        if (
-          (sprints.status === 200 || sprints.status === 304) &&
-          sprints.data &&
-          sprints.data !== "No Sprint present for the selected board" &&
-          sprints.data.sprintDetails
-        ) {
-          let sprintDetails = sprints.data.sprintDetails;
-          sprintDetails.map(async (sprint, idx) => {
-            let issues = await axios.get(
-              `http://localhost:8888/integratedTools/JIRA/allIssues/${sprint.originBoardId}/${sprint.sprintId}`
-            );
-            console.log("Entering late here");
-            if (
-              (issues.status === 200 || issues.status === 304) &&
-              issues.data &&
-              issues.data !== "No Issues present in this Board" &&
-              issues.data.allIssueDetails
-            ) {
-              this.setState({
-                allIssues: this.state.allIssues.concat(
-                  issues.data.allIssueDetails
-                ),
-              });
-            }
-          });
-        }
-      });
-    }
-    setTimeout(
-      function () {
-        //Start the timer
-        this.getBranchesInformation();
-      }.bind(this),
-      1000
-    );
-  };
-
-  getBranchesInformation = async () => {
-    const { allIssues } = this.state;
-    console.log("Entwring in getAllBranches: ", allIssues.length);
-    if (allIssues.length > 0) {
-      allIssues.map(async (issue) => {
-        let branches = await axios.get(
-          `http://localhost:8888/integratedTools/JIRA/branchDetails/${issue.keyAssociatedWithIssue}`
-        );
-        console.log(branches);
-        if (
-          (branches.status === 200 || branches.status === 304) &&
-          branches.data &&
-          branches.data !== "No repositories attached found" &&
-          branches.data.branchDetails
-        ) {
-          let b = {};
-          b.branches = branches.data.branchDetails;
-          b.issueId = issue.keyAssociatedWithIssue;
-          this.setState({
-            branchDetails: [...this.state.branchDetails, b],
-          });
-        }
-
-        let commits = await axios.get(
-          `http://localhost:8888/integratedTools/JIRA/commitDetails/${issue.keyAssociatedWithIssue}`
-        );
-        console.log("commits", commits);
-        if (
-          (commits.status === 200 || commits.status === 304) &&
-          commits.data &&
-          commits.data !== "No repositories attached found" &&
-          commits.data.commits
-        ) {
-          let c = {};
-          c.commits = commits.data.commits;
-          c.issueId = issue.keyAssociatedWithIssue;
-          this.setState({
-            commitHistory: [...this.state.commitHistory, c],
-          });
-        }
-      });
     }
   };
 
   getAllJobs = async () => {
-    let allJobs = await axios.get(`http://localhost:3001/jenkins/jobs`);
+    let allJobs = await axios.get(`http://52.9.164.185:3000/jenkins/jobs`);
     let allJobsArray = [];
+    let failedBuilds = 0,
+      passedBuilds = 0;
     if (allJobs.status === 200 || allJobs.status === 304) {
       allJobs.data.jobs.map(async (job) => {
         let jobDetails = await axios.get(
-          `http://localhost:3001/jenkins/jobs/${job.name}`
+          `http://52.9.164.185:3000/jenkins/jobs/${job.name}`
         );
         if (jobDetails.status === 200 || jobDetails.status === 304) {
           let job = {};
@@ -263,11 +255,9 @@ class Dashboard extends Component {
           job.totalBuilds = jobDetails.data.builds
             ? jobDetails.data.builds.length
             : 0;
-          let failedBuilds = 0,
-            passedBuilds = 0;
           buildsData.map(async (build) => {
             let buildDetails = await axios.get(
-              `http://localhost:3001/jenkins/jobs/maven-project/builds/${build.number}`
+              `http://52.9.164.185:3000/jenkins/jobs/maven-project/builds/${build.number}`
             );
             let buildObject = {};
             if (buildDetails.status === 200 || buildDetails.status === 304) {
@@ -285,28 +275,31 @@ class Dashboard extends Component {
               buildObject.url = buildDetails.data.url;
               buildObject.totalTime = buildDetails.data.totaltime;
 
-              if (buildObject.result === "FAILURE") {
+              if (buildDetails.data.result === "FAILURE") {
                 failedBuilds += 1;
-              } else if (buildObject.result === "SUCCESS") {
+              } else if (buildDetails.data.result === "SUCCESS") {
                 passedBuilds += 1;
               }
             }
 
             let buildLogDetails = await axios.get(
-              `http://localhost:3001/jenkins/jobs/maven-project/builds/${build.number}/log`
+              `http://52.9.164.185:3000/jenkins/jobs/maven-project/builds/${build.number}/log`
             );
-            console.log("Build log details", buildLogDetails);
             if (
               buildLogDetails.status === 200 ||
               buildLogDetails.status === 304
             ) {
               buildObject.logs = buildLogDetails.data;
             }
-            builds.push(buildObject);
+            if (buildObject.number !== undefined) {
+              builds.push(buildObject);
+            }
           });
           job.builds = builds;
           job.failedBuilds = failedBuilds;
           job.passedBuilds = passedBuilds;
+          passedBuilds = 0;
+          failedBuilds = 0;
           allJobsArray.push(job);
         }
       });
@@ -318,29 +311,60 @@ class Dashboard extends Component {
           allJobs: allJobsArray,
         }); //After 1 second, set render to true
       }.bind(this),
-      2000
+      1000
     );
+  };
+
+  getGithubData = async () => {
+    let gitCommits = await axios.get(
+      `http://54.219.215.34:8080/github/commits/thevarunjain/simple-java-maven-app`
+    );
+
+    if (gitCommits.status === 200 || gitCommits.status === 304) {
+      this.setState({
+        gitCommits: gitCommits.data.CommitDetails,
+      });
+    }
+
+    let gitPullRequests = await axios.get(
+      `http://54.219.215.34:8080/github/pullRequests/thevarunjain/simple-java-maven-app`
+    );
+
+    if (gitPullRequests.status === 200 || gitPullRequests.status === 304) {
+      this.setState({
+        gitPullRequests: gitPullRequests.data.CommitDetails,
+      });
+    }
+
+    let gitIssues = await axios.get(
+      `http://54.219.215.34:8080/github/issues/thevarunjain/simple-java-maven-app`
+    );
+
+    if (gitIssues.status === 200 || gitIssues.status === 304) {
+      this.setState({
+        gitIssues: gitIssues.data.CommitDetails,
+      });
+    }
+
+    let gitBranches = await axios.get(
+      `http://54.219.215.34:8080/github/branch/thevarunjain/simple-java-maven-app`
+    );
+
+    if (gitBranches.status === 200 || gitBranches.status === 304) {
+      this.setState({
+        gitBranches: gitBranches.data.branchDetails,
+      });
+    }
   };
 
   componentDidMount = async () => {
     this.getAllProjects();
     this.getAllJobs();
-    // let jiraAllSprints = await axios.get(
-    //   "http://localhost:8888/integratedTools/JIRA/ActiveSprintDetails/1"
-    // );
-
-    // let jiralAllIssues = await axios.get(
-    //   "http://localhost:8888/integratedTools/JIRA/allIssues/1/1"
-    // );
+    this.getGithubData();
   };
 
   render() {
-    const {
-      selectedUser,
-      jiraAllBoards,
-      allProjects,
-      selectedProject,
-    } = this.state;
+    const { allProjects } = this.state;
     let projectOptions = allProjects.map((project, index) => {
       return (
         <option key={index} value={project}>
@@ -438,7 +462,17 @@ class Dashboard extends Component {
                 className="dropdown-menu dropdown-menu-right"
                 aria-labelledby="dropdownMenu2"
               >
-                <span style={{ padding: "8px" }}>Logout</span>
+                <button
+                  onCLick={this.handleLogout}
+                  style={{
+                    padding: "8px",
+                    outline: "none",
+                    background: "white",
+                    border: "none",
+                  }}
+                >
+                  Logout
+                </button>
               </div>
             </div>
           </div>
@@ -463,7 +497,7 @@ class Dashboard extends Component {
               </Menu.Item>
               <Menu.Item key="2">
                 <ScheduleFilled />
-                <span>Tast Tracker</span>
+                <span>Task Tracker</span>
               </Menu.Item>
               <Menu.Item key="3">
                 <GithubOutlined />
@@ -528,25 +562,36 @@ class Dashboard extends Component {
                 }}
               >
                 {/* <Layout>Organization People</Layout> */}
-              <h2>Organization People</h2>
-              <ul class="list-group" style={{"width":"50%"}}>
-              <li class="list-group-item d-flex justify-content-between align-items-center">
-                  Abhishek Konduri
-                  <span class="badge badge-primary badge-pill"> Authorized</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                  Varun Jain 
-                  <span class="badge badge-primary badge-pill"> Authorized</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                  Rohan Kamat
-                  <span class="badge badge-primary-not badge-pill"> Not Authorized</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                  Jasnoor Brar
-                  <span class="badge badge-primary-not badge-pill">Not Authorized</span>
-                </li>
-              </ul>
+                <h2>Organization People</h2>
+                <ul class="list-group" style={{ width: "50%" }}>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Abhishek Konduri
+                    <span class="badge badge-primary badge-pill">
+                      {" "}
+                      Authorized
+                    </span>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Varun Jain
+                    <span class="badge badge-primary badge-pill">
+                      {" "}
+                      Authorized
+                    </span>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Rohan Kamat
+                    <span class="badge badge-primary-not badge-pill">
+                      {" "}
+                      Not Authorized
+                    </span>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Jasnoor Brar
+                    <span class="badge badge-primary-not badge-pill">
+                      Not Authorized
+                    </span>
+                  </li>
+                </ul>
               </Content>
             ) : (
               ""
@@ -557,22 +602,16 @@ class Dashboard extends Component {
                 style={{
                   margin: "24px 16px",
                   padding: 24,
-                  minHeight: 280,
                 }}
               >
                 <Layout>
                   <Content>
                     <DetailsJIRA
-                      data={jiraAllBoards}
-                      selectedProject={selectedProject}
+                      style={{ overflow: "scroll" }}
                       handleBoardChange={this.handleBoardChange}
                       {...this.state}
                     />
-                  </Content>
-                </Layout>
-                <Layout>
-                  <Content>
-                    <ViewBarChart data={data} />
+                    {/* <ViewBarChart data={data} /> */}
                   </Content>
                 </Layout>
               </Content>
@@ -581,11 +620,9 @@ class Dashboard extends Component {
             )}{" "}
             {this.state.selectedTab === "3" ? (
               <Content
-                className="site-layout-background"
                 style={{
                   margin: "24px 16px",
-                  padding: 24,
-                  minHeight: 280,
+                  padding: "24px",
                   display: "flex",
                   flexDirection: "column",
                   alignItemsL: "center",
@@ -596,7 +633,7 @@ class Dashboard extends Component {
                   <DetailsGit {...this.state} />
                 </Layout>
                 {/* <Layout>
-                  <Content style={{ height: 300 }}>
+                  <Content>
                     <ViewPieChart data={dataIssues} />
                   </Content>
                 </Layout> */}
