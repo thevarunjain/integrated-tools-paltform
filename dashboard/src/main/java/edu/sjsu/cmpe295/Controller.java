@@ -22,7 +22,7 @@ import java.util.Map;
 public class Controller {
 
 
-    final static String jenkinsUrl = "http://52.53.120.24:8080";
+    final static String jenkinsUrl = "http://52.53.120.24:8080/";
     final String urlPadding = "/api/json?pretty=true";
     final String authToken = "";
     final String username = "admin";
@@ -90,7 +90,7 @@ public class Controller {
 
                     JSONObject jobObject = new JSONObject();
                     jobObject.put("name" , job.getString("name"));
-                    jobObject.put("url" , job.getString("url"));
+                    jobObject.put("url" , updateURL(job.getString("url")));
                     res.add(jobObject);
             }
 
@@ -132,7 +132,7 @@ public class Controller {
             JSONArray builds = jsonObject.getJSONArray("builds");
 
             obj.put("name", name);
-            obj.put("url", jobUrl);
+            obj.put("url", updateURL(jobUrl));
             obj.put("builds", builds);
 
         }catch (Exception e) {
@@ -187,7 +187,7 @@ public class Controller {
             obj.put("number", jsonObject.getString("number"));
             obj.put("result",jsonObject.getString("result"));
             obj.put("timestamp",jsonObject.getString("timestamp"));
-            obj.put("url",jsonObject.getString("url"));
+            obj.put("url", updateURL(jsonObject.getString("url")));
             obj.put("totaltime",jsonObject.getString("duration"));
 
         }catch (Exception e) {
@@ -290,6 +290,12 @@ public class Controller {
             obj.put("status",e);
         }
         return obj.toString();
+    }
+
+    public static String updateURL(String url){
+
+        String[] arr = url.split(":8080/");
+        return jenkinsUrl+arr[1];
     }
 
 
