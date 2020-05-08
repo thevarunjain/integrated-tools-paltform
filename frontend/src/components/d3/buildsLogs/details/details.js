@@ -24,7 +24,6 @@ export default class DetailsBuildsLogs extends Component {
 
   handleViewLogs = (e, logs) => {
     e.preventDefault();
-    console.log("Logs and JSON strigify: ", logs, JSON.stringify(logs));
     this.setState({
       visible: true,
       logs: logs,
