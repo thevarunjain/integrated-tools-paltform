@@ -6,6 +6,7 @@ import PieChartBuilds from "../pie_chart/index";
 import ViewPieChartBuilds from "../views/index";
 import ViewBarChart from "../../github/views/ViewBarChartGit";
 import data from "../../github/data/index";
+import JSONPretty from "react-json-pretty";
 
 const { Panel } = Collapse;
 const { TextArea } = Input;
@@ -23,9 +24,11 @@ export default class DetailsBuildsLogs extends Component {
 
   handleViewLogs = (e, logs) => {
     e.preventDefault();
+    console.log("Logs and JSON strigify: ", logs, JSON.stringify(logs));
     this.setState({
       visible: true,
       logs: logs,
+      logsJSON: JSON.stringify(logs),
     });
   };
 
@@ -221,18 +224,10 @@ export default class DetailsBuildsLogs extends Component {
                   Go to log
                 </a>
               </p>
-
-              <p>Commit Message: {this.state.logs.commitMessage}</p>
-
-              <p>Tests Run: {this.state.logs["Tests run"]}</p>
-
-              <p>Skipped: {this.state.logs.Skipped}</p>
-
-              <p>Errors: {this.state.logs.Errors}</p>
-
-              <p>Failures: {this.state.logs.Failures}</p>
-
-              <p>Build Time: {this.state.logs.buildTime}</p>
+              <JSONPretty
+                id="json-pretty"
+                data={this.state.logsJSON}
+              ></JSONPretty>
             </div>
           ) : (
             ""
