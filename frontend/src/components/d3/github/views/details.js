@@ -52,8 +52,8 @@ export default class DetailsGit extends Component {
       },
       data: [
         {
-          yValueFormatString: "$#,###",
-          xValueFormatString: "MMMM",
+          yValueFormatString: "# Commits",
+          xValueFormatString: "",
           type: "spline",
           dataPoints: [],
         },
